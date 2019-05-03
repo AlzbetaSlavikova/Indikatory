@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block header %}
+ENTSOG Transparency platform<br>
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <table>
+            <tr><td>{{ form.operator.label }}: </td><td>{{ form.operator }}</td></tr>
+            <tr><td>{{ form.point.label }}: </td><td>{{ form.point }}</td></tr>
+            <tr><td></td><td><input type="submit" style="width: 100%;"></td></tr>
+        </table>
+    </form>
+    {% for field, errors in form.errors.items() %}
+        {% for error in errors %}
+            <span style="color: red;">Chyba pole - {{ field }} hláška - {{ error }}</span><br>
+        {% endfor %}
+    {% endfor %}
+    <hr>
+    Výsledek: {% if vysledek %} {{ vysledek }} {% else %} Vyplň formulář {% endif %}
+{% endblock %}
