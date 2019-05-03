@@ -20,9 +20,10 @@ class MujFormular(FlaskForm):
 @app.route("/", methods = ["GET", "POST"])
 def index():
     form = MujFormular()
-    url = 'https://transparency.entsog.eu/api/v1/operationaldatas?PointLabel={}&from=31-03-2019&to=31-12-2019&directionKey=entry'
     point='Waidhaus'
-    r=requests.get(url.format(point)).json()
+    url = f'https://transparency.entsog.eu/api/v1/operationaldatas?PointLabel={point}&from=31-03-2019&to=31-12-2019&directionKey=entry'
+    
+    r=requests.get(url).json()
     x= {r['operationaldatas'][0]['value']}
 
     points = {
