@@ -2,8 +2,8 @@
 from flask import Flask, render_template, jsonify
 import requests
 from flask_wtf import FlaskForm
-from wtforms import SelectField, widgets
-
+from wtforms import SelectField, widgets, DateField
+from wtforms.fields.html5 import DateField
 
 
 app = Flask(__name__)
@@ -11,11 +11,11 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "super tajny klic"
 
 
-
 class MujFormular(FlaskForm):
     operator = SelectField("Operátor", choices=[("N4G" ,"N4G"),("OGE" ,"OGE")])
     point = SelectField("IP", choices=[("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot")])
-
+    date_from = DateField("Datum od", format='%Y-%m-%d')
+    date_to = DateField("Datum do", format='%Y-%m-%d')
 
 @app.route("/", methods = ["GET", "POST"])
 def index():
@@ -34,6 +34,8 @@ def index():
     if form.validate_on_submit():
         operator = form.operator.data
         point = form.point.data
+        date_from = form.date_from.data
+        date_to = form.date_to.data
         vysledek = eval( 'x' )
         return render_template("formular.html", vysledek = vysledek, form = form)
     return render_template("formular.html", form = form)
