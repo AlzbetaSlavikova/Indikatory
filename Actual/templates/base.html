@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Czechitas project</title>
+    <style>
+        html, body{
+            margin: 0;
+        }
+        #content{
+            margin: auto;
+            max-width: 75%;
+            min-height: 100%;
+            /*border: solid;
+            border-color: black;
+            border-width: 2px;
+            border-radius: 15px;*/
+            padding: 10px;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+        header{
+            min-height: 100px;
+            min-width: 100%;
+            background-color: #569ee2;
+            margin-bottom: 50px;
+            padding: 12px;
+            font-size: 25px;
+            font-family: Arial Black;
+        }
+        footer{
+            position: sticky;
+            bottom: 0px;
+            min-height: 20px;
+            min-width: 100%;
+            background-color: #569ee2;
+            padding: 12px;
+            font-family: Arial Black;
+            margin-top: 100px;
+        }
+        #indicator{
+          list-style: none;
+          padding: 5px;
+        }
+            
+    </style>
+</head>
+<body>
+  <img id="N4G" src="\static\N4G.png" alt="logo_N4G" width="90" height="90" style="float: left; margin: 12px">  
+  <header>
+        {% block header %}
+        Czechitas project
+        {% endblock %}
+    </header>
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <footer>
+        {% block footer %}
+        2019, Alžběta Slavíková a Anna Cabalková
+        {% endblock %}
+    </footer>
+</body>
+</html>
