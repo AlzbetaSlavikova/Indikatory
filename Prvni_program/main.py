@@ -4,12 +4,25 @@ import requests
 from flask_wtf import FlaskForm
 from wtforms import SelectField, widgets, DateField
 from wtforms.fields.html5 import DateField
+from flask_sqlalchemy import SQLAlchemy
+import sqlite3
 
 
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = "super tajny klic"
+   
 
+app.config["SECRET_KEY"] = "super tajny klic"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///points.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Vytvoření databáze pro pevné hodnoty
+db = SQLAlchemy(app)
+
+class Points(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(100), unique=True, nullable=False)
+    label = db.Column(db.String(200), unique=True, nullable=False)
 
 class MujFormular(FlaskForm):
     operator = SelectField("Operator", choices=[("N4G" ,"N4G"),("OGE" ,"OGE")])
