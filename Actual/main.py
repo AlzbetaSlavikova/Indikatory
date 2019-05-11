@@ -55,22 +55,84 @@ def index():
     
     r_exit=requests.get(url_exit).json()
 
-    value_list_entry = list()
-    
-    for x in r_entry['operationaldatas']:
-      hodnota_entry = x['value']
-      value_list_entry.append(int(hodnota_entry))
+seznam_entry = []
 
-    value_list_exit = list()
+for x in r_entry['operationaldatas']:
+    periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
+    periodFrom_new = periodFrom.date()
+    periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
+    periodTo_new = periodTo.date()
+    hodnoty = {
+        "value": x['value'],
+        "periodFrom": periodFrom_new,
+        "periodTo": periodTo_new,
+        "operatorLabel": x['operatorLabel'],
+        "interruptionType": x['interruptionType'],
+        "indicator": x['indicator'],
+        "directionKey": x['directionKey'],
+        "pointLabel": x['pointLabel'],
+        "pointKey": x['pointKey']}
+    seznam_entry.append(hodnoty)
+# print(seznam_entry)
 
-    for x in r_exit['operationaldatas']:
-      hodnota_exit = x['value']
-      value_list_exit.append(int(hodnota_exit))
 
-  #jak ošetřit nulové hodnoty?
-  #dalo by se u grafu vyklikávat indikátory a na základě toho zobrazovat?
-  #jak udělat, aby se stránka posouvala
+seznam_exit = []
 
+for x in r_exit['operationaldatas']:
+    periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
+    periodFrom_new = periodFrom.date()
+    periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
+    periodTo_new = periodTo.date()
+    hodnoty = {
+        "value": x['value'],
+        "periodFrom": periodFrom_new,
+        "periodTo": periodTo_new,
+        "operatorLabel": x['operatorLabel'],
+        "interruptionType": x['interruptionType'],
+        "indicator": x['indicator'],
+        "directionKey": x['directionKey'],
+        "pointLabel": x['pointLabel'],
+        "pointKey": x['pointKey']
+        }
+    seznam_exit.append(hodnoty)
+# print(seznam_exit)
+
+
+# vytvoříme seznam všech datumů, které jsou v zadaném období, je možné použít pro oba API call
+import datetime
+start = datetime.date(2019, 1, 1)
+end = datetime.date(2019, 6, 30)
+
+delta = end - start
+
+datumy = []
+for i in range(delta.days + 1):
+    dnes = start + datetime.timedelta(days=i)
+    datumy.append(dnes)
+#print(datumy)
+
+# dohledá hodnotu pro každé datum v dané období - ENTRY
+hodnoty_entry = []
+
+for datum in datumy:
+    for hodnota in seznam_entry:
+        if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
+            hodnoty_entry.append(hodnota['value'])
+            break #ukončí podmínku pokud je splněna a vrátí se na začátek
+
+# print(hodnoty_entry)
+
+
+# dohledá hodnotu pro každé datum v dané období - EXIT
+hodnoty_exit = []
+
+for datum in datumy:
+    for hodnota in seznam_exit:
+        if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
+            hodnoty_exit.append(hodnota['value'])
+            break #ukončí podmínku pokud je splněna a vrátí se na začátek
+
+# print(hodnoty_exit)
 
     if form.validate_on_submit():
         operator = form.operator.data
@@ -78,46 +140,46 @@ def index():
         direction = form.direction.data
         date_from = form.date_from.data
         date_to = form.date_to.data
-        vysledek = [value_list_entry, value_list_exit]
-        return render_template("formular2.html", vysledek = vysledek, form = form, value_list_entry = value_list_entry, value_list_exit = value_list_exit)
+        vysledek = seznam_exit
+        return render_template("formular2.html", vysledek = vysledek, form = form)
     return render_template("formular2.html", form = form)
 
-@app.route("/graf_I", methods = ["GET"])
-def view2():
-    return render_template("formular.html", form = MujFormular())
+# @app.route("/graf_I", methods = ["GET"])
+# def view2():
+#     return render_template("formular.html", form = MujFormular())
 
-@app.route("/graf_I", methods = ["POST"])
-def index2():
-    form = MujFormular()
-    operator = form.operator.data
-    point= form.point.data
-    direction= form.direction.data
-    indicator = form.indicator.data
-    iso_date_from = form.date_from.data
-    iso_date_to = form.date_to.data
+# @app.route("/graf_I", methods = ["POST"])
+# def index2():
+#     form = MujFormular()
+#     operator = form.operator.data
+#     point= form.point.data
+#     direction= form.direction.data
+#     indicator = form.indicator.data
+#     iso_date_from = form.date_from.data
+#     iso_date_to = form.date_to.data
 
-    date_from = iso_date_from.strftime("%d-%m-%Y")
-    date_to = iso_date_to.strftime("%d-%m-%Y")
+#     date_from = iso_date_from.strftime("%d-%m-%Y")
+#     date_to = iso_date_to.strftime("%d-%m-%Y")
     
-    url = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
+#     url = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
     
-    r=requests.get(url).json()
+#     r=requests.get(url).json()
         
-    value_list = list()
+#     value_list = list()
     
-    for x in r['operationaldatas']:
-      hodnota = x['value']
-      value_list.append(int(hodnota))
+#     for x in r['operationaldatas']:
+#       hodnota = x['value']
+#       value_list.append(int(hodnota))
 
-    if form.validate_on_submit():
-        operator = form.operator.data
-        point = form.point.data
-        direction = form.direction.data
-        date_from = form.date_from.data
-        date_to = form.date_to.data
-        vysledek = value_list
-        return render_template("formular.html", vysledek = vysledek, form = form, value_list = value_list)
-    return render_template("formular.html", form = form)
+#     if form.validate_on_submit():
+#         operator = form.operator.data
+#         point = form.point.data
+#         direction = form.direction.data
+#         date_from = form.date_from.data
+#         date_to = form.date_to.data
+#         vysledek = value_list
+#         return render_template("formular.html", vysledek = vysledek, form = form, value_list = value_list)
+#     return render_template("formular.html", form = form)
     
 # Na adrese /plot zobrazí šablonu "plot.html", která obsahuje obrázek "plot.png"
 @app.route("/plot", methods = ["GET"])
@@ -128,22 +190,44 @@ def plot():
 # ve které my obrázek s grafem vygenerujeme
 @app.route("/plot.png", methods = ["GET"])
 def render_plot():
-    # Vytvoří nový obrázek
-    #fig = Figure()
-    # Vytvoří v něm graf
-    #axis = fig.add_subplot(1, 1, 1)
-    # Vygeneruje náhodná data pro náš graf
-    xs = range(100)
-    ys = [random.randint(1, 50) for x in xs]
-    # Nakreslí graf s těmito hodnotami
-    #axis.plot(xs, ys)
-    plt.plot(xs, ys)
-    
-    plt.fill_between(xs,ys, color = "skyblue", alpha = 0.4)
+    # import pro graf
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    # data to plot
+    n_groups = len(datumy)
+    values_entry = hodnoty_entry
+    values_exit = [-value for value in hodnoty_exit]
+
+    # create plot
+    fig, ax = plt.subplots()
+    index = np.arange(n_groups)
+    bar_width = 1
+    opacity = 0.8
+
+    rects1 = plt.bar(index, values_entry, bar_width,
+    alpha=opacity,
+    color='b',
+    label='ENTRY')
+
+    rects2 = plt.bar(index, values_exit, bar_width,
+    alpha=opacity,
+    color='g',
+    label='EXIT')
+
+    plt.xlabel('Date')
+    plt.ylabel('Value')
+    plt.title('IP Exit-Entry')
+    plt.xticks(index + bar_width, datumy)
+    plt.legend()
+
+    plt.tight_layout()
     #plt.show()
     # Převede graf na obrázek PNG a pošle ho zpátky prohlížeči
     output = io.BytesIO()
     #FigureCanvas(fig).print_png(output)
     plt.print_png(output)
     return Response(output.getvalue(), mimetype='image/png')
+    
+
 
