@@ -22,6 +22,8 @@ Vizualizace indikátorů <br>
         {% endfor %}
     {% endfor %}
     <hr>
-    Výsledek: {% if vysledek %} {{ vysledek }} {% else %} Vyplň formulář {% endif %}
+    Výsledek: {% if form.validate_on_submit() %} 
+      <img src="{{ url_for('render_plot', operator=form.operator.data, point=form.point.data, indicator=form.indicator.data, date_from=form.date_from.data, date_to=form.date_to.data) }}">
+    {% else %} Vyplň formulář {% endif %}
     
 {% endblock %}
