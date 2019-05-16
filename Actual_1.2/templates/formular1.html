@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block header %}
+
+{{ super() }}
+Výběr indikátorů
+{% endblock %}
+
+{% block content %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <table>
+            <tr><td>{{ form.operator.label }}: </td><td>{{ form.operator }}</td></tr>
+            <tr><td>{{ form.point.label }}: </td><td>{{ form.point }}</td></tr>
+            <tr><td>{{ form.indicator.label }}: </td><td>{{ form.indicator }}</td></tr>
+            <tr><td>{{ form.date_from.label }}: </td><td>{{ form.date_from }}</td></tr>
+            <tr><td>{{ form.date_to.label }}: </td><td>{{ form.date_to }}</td></tr>
+            <tr><td></td><td><input type="submit" style="width: 100%;"></td></tr>
+        </table>
+    </form>
+    {% for field, errors in form.errors.items() %}
+        {% for error in errors %}
+            <span style="color: red;">Chyba pole - {{ field }} zkontroluj kombinaci operátora a IP - {{ error }}</span><br>
+        {% endfor %}
+    {% endfor %}
+    <hr>
+    Výsledek: {% if form.validate_on_submit() %} 
+         {% else %} Vyplň formulář {% endif %}
+    
+{% endblock %}
