@@ -92,6 +92,7 @@ def plot():
 # Když prohlížeč požádá o zobrazení obrázku plot.png, tak se zavolá tahle route,
 # ve které my obrázek s grafem vygenerujeme
 @app.route("/plot.png", methods = ["GET"])
+@app.route("/chart", methods = ["GET"])
 def render_plot():
     # import pro graf
     operator = request.args.get("operator")
@@ -189,7 +190,7 @@ def render_plot():
                 hodnoty_exit.append(hodnota['value'])
                 break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
-
+    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit))
 
     # data to plot
     n_groups = len(datumy)

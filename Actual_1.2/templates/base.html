@@ -78,40 +78,6 @@
         }
                
     </style>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Date',  'Entry', 'Exit'],
-          ['01.01.2019', 305,         -305],
-          ['30.06.2019', 20,         -20],
-          ['15.07.2019', 70,         -70]
-        ]);
-
-        var options = {
-          title: 'IP Entry-Exit',
-          vAxis: {title: 'Value'},
-          isStacked: true
-        };
-
-        // var options_fullStacked = {
-        //   isStacked: 'relative',
-        //   height: 300,
-        //   legend: {position: 'top', maxLines: 3},
-        //   vAxis: {
-        //     minValue: 0,
-        //     ticks: [0, .3, .6, .9, 1]
-        //   }
-        // };
-
-        var chart = new google.visualization.SteppedAreaChart(document.getElementById('chart_div'));
-
-        chart.draw(data, options);
-      }
-    </script>
 </head>
 <body>
 

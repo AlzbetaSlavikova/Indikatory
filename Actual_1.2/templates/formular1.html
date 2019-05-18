@@ -6,7 +6,7 @@ Výběr indikátorů
 {% endblock %}
 
 {% block content %}
-    <form method="POST">
+    <form method="GET" action="{{ url_for('render_plot') }}"">
         {{ form.hidden_tag() }}
         <table>
             <tr><td>{{ form.operator.label }}: </td><td>{{ form.operator }}</td></tr>
@@ -24,6 +24,8 @@ Výběr indikátorů
     {% endfor %}
     <hr>
     Výsledek: {% if form.validate_on_submit() %} 
-         {% else %} Vyplň formulář {% endif %}
+        <img src="{{ url_for('render_plot', operator=form.operator.data, point=form.point.data, indicator=form.indicator.data, date_from=form.date_from.data, date_to=form.date_to.data) }}">
+        <img src="{{ url_for('chart') }}">
+    {% else %} Vyplň formulář {% endif %}
     
 {% endblock %}

@@ -86,6 +86,7 @@ def plot():
 # Když prohlížeč požádá o zobrazení obrázku plot.png, tak se zavolá tahle route,
 # ve které my obrázek s grafem vygenerujeme
 @app.route("/plot.png", methods = ["GET"])
+@app.route("/chart", methods = ["GET"])
 def render_plot():
     # import pro graf
     operator = request.args.get("operator")
@@ -140,6 +141,7 @@ def render_plot():
             "periodTo": periodTo_new,
             "operatorLabel": x['operatorLabel'],
             "interruptionType": x['interruptionType'],
+
             "indicator": x['indicator'],
             "directionKey": x['directionKey'],
             "pointLabel": x['pointLabel'],
@@ -147,7 +149,6 @@ def render_plot():
             }
         seznam_exit.append(hodnoty)
 # print(seznam_exit)
-
 
 # vytvoříme seznam všech datumů, které jsou v zadaném období, je možné použít pro oba API call
     
@@ -180,15 +181,18 @@ def render_plot():
     for datum in datumy:
         for hodnota in seznam_exit:
             if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
-                hodnoty_exit.append(hodnota['value'])
+                hodnoty_exit.append(- hodnota['value'])
                 break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
-
-
+    
     # data to plot
     n_groups = len(datumy)
     values_entry = hodnoty_entry
     values_exit = [-value for value in hodnoty_exit]
+
+    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit))
+
+
 
     # create plot
     fig, ax = plt.subplots()
@@ -221,4 +225,6 @@ def render_plot():
     return Response(output.getvalue(), mimetype='image/png')
     
 
-
+@app.route('/chart', methods = ["GET"])
+def chart():
+    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit))

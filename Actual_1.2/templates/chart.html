@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+{% block header %}
+GoogleChart<br>
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+    var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Date');
+        data.addColumn('number', 'entry');
+        data.addColumn('number', 'exit');
+        data.addRows([
+
+            {% for datum, entry, exit_  in data_rows %}
+                [ "{{ datum }}", {{ entry }}, {{ exit_ }}]
+                // new Date(datum).toISOString()
+                {% if not loop.last %},{% endif %}    
+            {% endfor %}
+          
+        ]);
+
+        var options = {
+        title: 'IP Entry-Exit',
+        vAxis: {title: 'Value'},
+        isStacked: true,
+        colors: ['#ADFF2F', '#00BFFF']
+        };
+
+        var chart = new google.visualization.SteppedAreaChart(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+    }
+    </script>
+
+{% endblock %}
