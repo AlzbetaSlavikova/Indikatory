@@ -24,6 +24,13 @@ class EFormular(FlaskForm):
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
 
+class IFormular(FlaskForm):
+    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("BE-TSO-0001", "Fluxys Belgium"),("DE-TSO-0001", "Gascade"),("GCA", "GCA"),("PL-TSO-0001", "Gaz-System"),("Innogy GS", "Innogy GS"),("MND", "MND"),("CZ-TSO-0001", "Moravia GS"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("Tarvisio", "Tarvisio"),("Ukrtransgaz", "Ukrtransgaz")])
+    point = SelectField("IP", choices=[("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow")])
+    direction = SelectField("Entry/Exit", choices=[("Entry", "Entry"),("Exit", "Exit")])
+    indicator = RadioField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
+    date_from = DateField("Datum od", format='%Y-%m-%d')
+    date_to = DateField("Datum do", format='%Y-%m-%d')
 
 @app.route("/", methods = ["GET"])
 def view():
@@ -38,45 +45,44 @@ def view1():
 def index():
     form = EFormular()
 
-    # print(hodnoty_exit)
     return render_template("formular1.html", form = form)
 
-# @app.route("/graf_I", methods = ["GET"])
-# def view2():
-#     return render_template("formular.html", form = MujFormular())
+@app.route("/graf_I", methods = ["GET"])
+def view2():
+    return render_template("formular2.html", form = IFormular())
 
-# @app.route("/graf_I", methods = ["POST"])
-# def index2():
-#     form = MujFormular()
-#     operator = form.operator.data
-#     point= form.point.data
-#     direction= form.direction.data
-#     indicator = form.indicator.data
-#     iso_date_from = form.date_from.data
-#     iso_date_to = form.date_to.data
+@app.route("/graf_I", methods = ["POST"])
+def index2():
+    form = IFormular()
+    # operator = form.operator.data
+    #point= form.point.data
+    #direction= form.direction.data
+    #indicator = form.indicator.data
+    #iso_date_from = form.date_from.data
+    #iso_date_to = form.date_to.data
 
-#     date_from = iso_date_from.strftime("%d-%m-%Y")
-#     date_to = iso_date_to.strftime("%d-%m-%Y")
+    #date_from = iso_date_from.strftime("%d-%m-%Y")
+    #date_to = iso_date_to.strftime("%d-%m-%Y")
     
-#     url = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
+    #url = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
     
-#     r=requests.get(url).json()
+    #r=requests.get(url).json()
         
-#     value_list = list()
+    #value_list = list()
     
-#     for x in r['operationaldatas']:
-#       hodnota = x['value']
-#       value_list.append(int(hodnota))
+    #for x in r['operationaldatas']:
+     #  hodnota = x['value']
+      # value_list.append(int(hodnota))
 
-#     if form.validate_on_submit():
-#         operator = form.operator.data
-#         point = form.point.data
-#         direction = form.direction.data
-#         date_from = form.date_from.data
-#         date_to = form.date_to.data
-#         vysledek = value_list
-#         return render_template("formular.html", vysledek = vysledek, form = form, value_list = value_list)
-#     return render_template("formular.html", form = form)
+    #if form.validate_on_submit():
+     #   operator = form.operator.data
+      #  point = form.point.data
+       # direction = form.direction.data
+       # date_from = form.date_from.data
+       # date_to = form.date_to.data
+       # vysledek = value_list
+       # return render_template("formular2.html", vysledek = vysledek, form = form, value_list = value_list)
+    return render_template("formular2.html", form = form)
     
 # Na adrese /plot zobrazí šablonu "plot.html", která obsahuje obrázek "plot.png"
 @app.route("/plot", methods = ["GET"])
@@ -90,7 +96,7 @@ def render_plot():
     # import pro graf
     operator = request.args.get("operator")
     point = request.args.get("point")
-    
+   
     indicator = request.args.get("indicator")
     iso_date_from = datetime.strptime(request.args.get("date_from"), "%Y-%m-%d").date()
     iso_date_to = datetime.strptime(request.args.get("date_to"), "%Y-%m-%d").date()
