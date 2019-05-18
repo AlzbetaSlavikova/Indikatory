@@ -187,7 +187,7 @@ def render_plot():
     for datum in datumy:
         for hodnota in seznam_exit:
             if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
-                hodnoty_exit.append(hodnota['value'])
+                hodnoty_exit.append(hodnota['value'] * -1)
                 break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
     return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit))
