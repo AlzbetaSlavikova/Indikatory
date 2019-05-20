@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify, Response, request
 import requests
 from flask_wtf import FlaskForm
-from wtforms import SelectField, widgets, RadioField, DateField 
+from wtforms import SelectField, widgets, RadioField, DateField, SelectMultipleField
 from wtforms.fields.html5 import DateField
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -28,7 +28,16 @@ class IFormular(FlaskForm):
     operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("BE-TSO-0001", "Fluxys Belgium"),("DE-TSO-0001", "Gascade"),("GCA", "GCA"),("PL-TSO-0001", "Gaz-System"),("Innogy GS", "Innogy GS"),("MND", "MND"),("CZ-TSO-0001", "Moravia GS"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("Tarvisio", "Tarvisio"),("Ukrtransgaz", "Ukrtransgaz")])
     point = SelectField("IP", choices=[("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow")])
     direction = SelectField("Entry/Exit", choices=[("Entry", "Entry"),("Exit", "Exit")])
-    indicator = RadioField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
+    indicator = RadioField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity")])
+    indicator2 = RadioField("Indikátor2", choices=[("Interruptible Booked", "Interruptible Booked Capacity")])
+    indicator3 = RadioField("Indikátor3", choices=[("Interruptible Total" ,"Interruptible Total Capacity")])
+    indicator4 = RadioField("Indikátor4", choices=[("Firm Technical", "Firm Technical Capacity")])
+    indicator5 = RadioField("Indikátor5", choices=[("Firm Booked", "Firm Booked Capacity")])
+    indicator6 = RadioField("Indikátor6", choices=[("Firm Available", "Firm Available Capacity")])
+    indicator7 = RadioField("Indikátor7", choices=[("Planned interruption of firm capacity", "Planned interruption of firm capacity")])
+    indicator8 = RadioField("Indikátor8", choices=[("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity")])
+    indicator9 = RadioField("Indikátor9", choices=[("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity")])
+    indicator10 = RadioField("Indikátor10", choices=[("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
 
@@ -69,7 +78,7 @@ def index2():
     #r=requests.get(url).json()
         
     #value_list = list()
-    
+  
     #for x in r['operationaldatas']:
      #  hodnota = x['value']
       # value_list.append(int(hodnota))
@@ -92,7 +101,6 @@ def plot():
 # Když prohlížeč požádá o zobrazení obrázku plot.png, tak se zavolá tahle route,
 # ve které my obrázek s grafem vygenerujeme
 @app.route("/plot.png", methods = ["GET"])
-@app.route("/chart", methods = ["GET"])
 def render_plot():
     # import pro graf
     operator = request.args.get("operator")
@@ -187,7 +195,7 @@ def render_plot():
     for datum in datumy:
         for hodnota in seznam_exit:
             if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
-                hodnoty_exit.append(hodnota['value'] * -1)
+                hodnoty_exit.append(hodnota['value'])
                 break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
     return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit))

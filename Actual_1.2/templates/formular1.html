@@ -6,7 +6,7 @@ Výběr indikátorů
 {% endblock %}
 
 {% block content %}
-    <form method="GET" action="{{ url_for('render_plot') }}"">
+    <form method="GET" action="{{ url_for('render_plot') }}">
         {{ form.hidden_tag() }}
         <table>
             <tr><td>{{ form.operator.label }}: </td><td>{{ form.operator }}</td></tr>
