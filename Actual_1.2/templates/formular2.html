@@ -12,16 +12,7 @@ Výběr zobrazení
             <tr><td>{{ form.operator.label }}: </td><td>{{ form.operator }}</td></tr>
             <tr><td>{{ form.point.label }}: </td><td>{{ form.point }}</td></tr>
             <tr><td>{{ form.direction.label }}: </td><td>{{ form.direction }}</td></tr>
-            <tr><td>{{ form.indicator.label }}: </td><td>{{ form.indicator }}</td></tr>
-            <tr><td>{{ form.indicator2 }}</td></tr>
-            <tr><td>{{ form.indicator3 }}</td></tr>
-            <tr><td>{{ form.indicator4 }}</td></tr>
-            <tr><td>{{ form.indicator5 }}</td></tr>
-            <tr><td>{{ form.indicator6 }}</td></tr>
-            <tr><td>{{ form.indicator7 }}</td></tr>
-            <tr><td>{{ form.indicator8 }}</td></tr>
-            <tr><td>{{ form.indicator9 }}</td></tr>
-            <tr><td>{{ form.indicator10 }}</td></tr>
+            <tr><td>{{ form.indicator.label }}:</td><td>{{ form.indicator }}</td></tr>
             <tr><td>{{ form.date_from.label }}: </td><td>{{ form.date_from }}</td></tr>
             <tr><td>{{ form.date_to.label }}: </td><td>{{ form.date_to }}</td></tr>
             <tr><td></td><td><input type="submit" style="width: 100%;"></td></tr>
@@ -33,6 +24,10 @@ Výběr zobrazení
         {% endfor %}
     {% endfor %}
     <hr>
-    Výsledek: {% if vysledek %} {{ vysledek }} {% else %} Vyplň formulář {% endif %}
+    Výsledek: {% if form.validate_on_submit() %} 
+        <img src="{{ url_for('render_plot_I', operator=form.operator.data, point=form.point.data, indicator=form.indicator.data, direction=form.direction.data, date_from=form.date_from.data, date_to=form.date_to.data) }}">
+        <img src="{{ url_for('chart2') }}">
+        <!--tady jsem označila chart2, ale netuším, jestli se to tak mělo a doplnila jsem indicator do src výše-->
+    {% else %} Vyplň formulář {% endif %}
     
 {% endblock %}
