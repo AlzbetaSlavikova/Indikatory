@@ -32,6 +32,7 @@ class IFormular(FlaskForm):
     point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Oberkappel (OGE)","Oberkappel"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany")])
     direction = SelectField("Entry/Exit", choices=[("Entry", "Entry"),("Exit", "Exit")])
     indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
+    indicator2 = SelectField("Indikátor2", choices=[("Firm Booked", "Firm Booked Capacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
 
@@ -72,7 +73,6 @@ def render_plot():
     # import pro graf
     operator = request.args.get("operator")
     point = request.args.get("point")
-   
     indicator = request.args.get("indicator")
     iso_date_from = datetime.strptime(request.args.get("date_from"), "%Y-%m-%d").date()
     iso_date_to = datetime.strptime(request.args.get("date_to"), "%Y-%m-%d").date()
@@ -208,7 +208,7 @@ def render_plot_I():
     point = request.args.get("point")
     direction = request.args.get("direction")
     indicator = request.args.get("indicator")
-    #indicator2 = request.args.get("indicator2") - tohle byl pokus o navázání víc API, když jsem to ještě měla rozdělený podle jednotlivých indikátorů do různých funkcí
+    indicator2 = request.args.get("indicator2") #- tohle byl pokus o navázání víc API, když jsem to ještě měla rozdělený podle jednotlivých indikátorů do různých funkcí
     #indicator3 = request.args.get("indicator3")
     #indicator4 = request.args.get("indicator4")
     #indicator5 = request.args.get("indicator5")
