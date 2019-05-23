@@ -165,41 +165,17 @@ def render_plot():
                 hodnoty_exit.append(hodnota['value'])
                 break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
-    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit))
- # data to plot
-    n_groups = len(datumy)
-    values_entry = hodnoty_entry
-    values_exit = [-value for value in hodnoty_exit]
+    technical_capacity = []
 
-     # create plot
-    fig, ax = plt.subplots()
-    index = np.arange(n_groups)
-    bar_width = 1
-    opacity = 0.8
+    #for technical_capacity in technical_capacities:
+    for hodnota in seznam_exit:
+          if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Waidhaus':
+            technical_capacity.append('120000000')
+            break
 
-    rects1 = plt.bar(index, values_entry, bar_width,
-    alpha=opacity,
-    color='b',
-    label='ENTRY')
 
-    rects2 = plt.bar(index, values_exit, bar_width,
-    alpha=opacity,
-    color='g',
-    label='EXIT')
-
-    plt.xlabel('Date')
-    plt.ylabel('Value')
-    plt.title('IP Exit-Entry')
-    plt.xticks(index + bar_width, datumy)
-    plt.legend()
-
-    plt.tight_layout()
-    #plt.show()
-    # Převede graf na obrázek PNG a pošle ho zpátky prohlížeči
-    output = io.BytesIO()
-    FigureCanvas(fig).print_png(output)
-    #plt.print_png(output)
-    return Response(output.getvalue(), mimetype='image/png')
+    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit, technical_capacity))
+ 
 
 @app.route("/plot.png", methods = ["GET"])
 def render_plot_I():
@@ -208,21 +184,13 @@ def render_plot_I():
     point = request.args.get("point")
     direction = request.args.get("direction")
     indicator = request.args.get("indicator")
-    indicator2 = request.args.get("indicator2") #- tohle byl pokus o navázání víc API, když jsem to ještě měla rozdělený podle jednotlivých indikátorů do různých funkcí
-    #indicator3 = request.args.get("indicator3")
-    #indicator4 = request.args.get("indicator4")
-    #indicator5 = request.args.get("indicator5")
-    #indicator6 = request.args.get("indicator6")
-    #indicator7 = request.args.get("indicator7")
-    #indicator8 = request.args.get("indicator8")
-    #indicator9 = request.args.get("indicator9")
-    #indicator10 = request.args.get("indicator10")
+
     iso_date_from = datetime.strptime(request.args.get("date_from"), "%Y-%m-%d").date()
     iso_date_to = datetime.strptime(request.args.get("date_to"), "%Y-%m-%d").date()
 
     date_from = iso_date_from.strftime("%d-%m-%Y")
     date_to = iso_date_to.strftime("%d-%m-%Y")
-    #tohle měla být zkouška navázání dvou indikátorů na už existující graf (zaškrtla jsem oba indikátory, které měly vlastní funkci) a z nich se měly vygenerovat dvě API, podobně jako EXIT a ENTRY výše...ale stejně mi to nefungovalo. Pokusila jsem se přepsat všechny entry/exit do hodnot 1 a 2 na zkoušku, ale nevím, jestli jsem ten graf správně pochopila
+   
     for i in indicator:  
       url_1 = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={i}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
 
@@ -323,38 +291,8 @@ def render_plot_I():
     #            break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
       return render_template('chart2.html', data_rows = zip(datumy, hodnoty_1))
-    # data to plot
-      n_groups = len(datumy)
-      values_1 = hodnoty_1
-      values_2 = hodnoty_2
 
-    # create plot
-    fig, ax = plt.subplots()
-    index = np.arange(n_groups)
-    bar_width = 1
-    opacity = 0.8
 
-    rects1 = plt.bar(index, values_1, bar_width,
-    alpha=opacity,
-    color='b',
-    label='ENTRY')
 
-    rects2 = plt.bar(index, values_2, bar_width,
-    alpha=opacity,
-    color='g',
-    label='EXIT')
 
-    plt.xlabel('Date')
-    plt.ylabel('Value')
-    plt.title('IP Exit-Entry')
-    plt.xticks(index + bar_width, datumy)
-    plt.legend()
-
-    plt.tight_layout()
-    #plt.show()
-    # Převede graf na obrázek PNG a pošle ho zpátky prohlížeči
-    output = io.BytesIO()
-    FigureCanvas(fig).print_png(output)
-    #plt.print_png(output)
-    return Response(output.getvalue(), mimetype='image/png')
     
