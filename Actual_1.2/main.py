@@ -165,16 +165,21 @@ def render_plot():
                 hodnoty_exit.append(hodnota['value'])
                 break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
-    technical_capacity = []
+    technical_capacity_exit = []
 
-    #for technical_capacity in technical_capacities:
     for hodnota in seznam_exit:
           if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Waidhaus':
-            technical_capacity.append('120000000')
+            technical_capacity_exit.append('-1071472000')
             break
 
+    technical_capacity_entry = []
 
-    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit, technical_capacity))
+    for hodnota in seznam_entry:
+          if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Waidhaus':
+            technical_capacity_entry.append('120000000')
+            break
+
+    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit, technical_capacity_exit, technical_capacity_entry))
  
 
 @app.route("/plot.png", methods = ["GET"])
