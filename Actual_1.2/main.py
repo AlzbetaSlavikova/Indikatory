@@ -20,8 +20,8 @@ class MultiCheckboxField(SelectMultipleField):
   option_widget= widgets.CheckboxInput()
 
 class EFormular(FlaskForm):
-    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("BE-TSO-0001", "Fluxys Belgium"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System"),("CZ-TSO-0001", "Moravia GS"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz")])
-    point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Oberkappel (OGE)","Oberkappel"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany")])
+    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("BE-TSO-0001", "Fluxys Belgium"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System"),("CZ-TSO-0001", "Moravia GS"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz"),("DE-TSO-0001","Gastransport")])
+    point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Oberkappel (OGE)","Oberkappel"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany"),("VGS Moravia", "Moravia")])
     
     indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
@@ -32,7 +32,7 @@ class IFormular(FlaskForm):
     point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Oberkappel (OGE)","Oberkappel"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany")])
     direction = SelectField("Entry/Exit", choices=[("Entry", "Entry"),("Exit", "Exit")])
     indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
-    indicator2 = SelectField("Indikátor2", choices=[("Firm Booked", "Firm Booked Capacity")])
+    indicator2 = SelectField("Indikátor2", choices=[("Firm Booked", "Firm Booked Capacity"),("","")])#pouze v případě, že by se indikátorům dávala zvlášť funkce!!
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
 
@@ -223,17 +223,19 @@ def render_plot_I():
     date_from = iso_date_from.strftime("%d-%m-%Y")
     date_to = iso_date_to.strftime("%d-%m-%Y")
     #tohle měla být zkouška navázání dvou indikátorů na už existující graf (zaškrtla jsem oba indikátory, které měly vlastní funkci) a z nich se měly vygenerovat dvě API, podobně jako EXIT a ENTRY výše...ale stejně mi to nefungovalo. Pokusila jsem se přepsat všechny entry/exit do hodnot 1 a 2 na zkoušku, ale nevím, jestli jsem ten graf správně pochopila
-    url_1 = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
-    
-    r_1=requests.get(url_1).json()
-    
-    url_2 = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator2}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
-    
-    r_2=requests.get(url_2).json()
+    for i in indicator:  
+      url_1 = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={i}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
 
-    seznam_1 = []
+      r_1=requests.get(url_1).json()
+      print(indicator)
 
-    for x in r_1['operationaldatas']:
+    #url_2 = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator2}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
+    
+    #r_2=requests.get(url_2).json()
+
+      seznam_1 = []
+
+      for x in r_1['operationaldatas']:
         periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
         periodFrom_new = periodFrom.date()
         periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
@@ -250,9 +252,26 @@ def render_plot_I():
             "pointKey": x['pointKey']}
         seznam_1.append(hodnoty)
 
-    seznam_2 = []
+  #  for index, req in enumerate(requests):
+  #    method = req['method']
+  #    path = req['path']
+  #    body = req.get('body', None)
 
-    for x in r_2['operationaldatas']:
+  #    with app.app_context(path, method=method, data = body):
+   #     try:
+    #      rv=app.preprocess_request()
+     #     if rv is None:
+      #      rv = app.dispatch_request() 
+       # except Exception as e:
+      #    rv = app. handle_user_exception(e)
+       # response = app.make_response(rv)
+    #    response = app.process_response(response)
+    #  response.append({"status": response.status_code, "response": _read_response(response)})
+   # return make_response(json.dumps(responses), 207, HEADERS)
+
+      seznam_2 = []
+
+      for x in r_2['operationaldatas']:
         periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
         periodFrom_new = periodFrom.date()
         periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
@@ -272,42 +291,42 @@ def render_plot_I():
 
 # vytvoříme seznam všech datumů, které jsou v zadaném období, je možné použít pro oba API call
     
-    start = iso_date_from
-    end = iso_date_to
+      start = iso_date_from
+      end = iso_date_to
 
-    delta = end - start
+      delta = end - start
 
-    datumy = []
-    for i in range(delta.days + 1):
+      datumy = []
+      for i in range(delta.days + 1):
         dnes = start + timedelta(days=i)
         datumy.append(dnes)
 
 # dohledá hodnotu pro každé datum v dané období - ENTRY
-    hodnoty_1 = []
+      hodnoty_1 = []
 
-    for datum in datumy:
+      for datum in datumy:
         for hodnota in seznam_1:
             if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
                 hodnoty_1.append(hodnota['value'])
                 break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
-    print(hodnoty_1)
+    #print(hodnoty_1)
 
 
 # dohledá hodnotu pro každé datum v dané období - EXIT
-    hodnoty_2 = []
+#      hodnoty_2 = []
 
-    for datum in datumy:
-        for hodnota in seznam_2:
-            if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
-                hodnoty_2.append(hodnota['value'])
-                break #ukončí podmínku pokud je splněna a vrátí se na začátek
+#      for datum in datumy:
+ #       for hodnota in seznam_2:
+  #          if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
+   #             hodnoty_2.append(hodnota['value'])
+    #            break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
-    return render_template('chart2.html', data_rows = zip(datumy, hodnoty_1, hodnoty_2))
+      return render_template('chart2.html', data_rows = zip(datumy, hodnoty_1))
     # data to plot
-    n_groups = len(datumy)
-    values_1 = hodnoty_1
-    values_2 = hodnoty_2
+      n_groups = len(datumy)
+      values_1 = hodnoty_1
+      values_2 = hodnoty_2
 
     # create plot
     fig, ax = plt.subplots()

@@ -14,7 +14,18 @@
             height: 100%;
             font-family: 'Montserrat', sans-serif;
             background-color: white;
-            background-size: cover;                        
+            background-size: cover;
+            color: #144069;  
+        }
+        #popis{
+            margin: 30px;
+            margin-left: 100px;
+            height: 100%;
+            font-family: 'Montserrat', sans-serif;
+            background-color: white;
+            background-size: cover;
+            color: #144069;
+            text-align: center;                      
         }
         header{
             min-height: 165px;
@@ -35,6 +46,16 @@
           font-size: 50px;
           margin-bottom: 0;
           margin-top: 20px;
+        }
+        header h2 {
+          text-align: left;
+          font-size: 30px;
+          margin-bottom: 0;
+          margin-top: 5px;
+        }
+        .uvod {
+          text-align: center;
+          color: #144069;
         }
         footer{
             position: sticky;
@@ -59,54 +80,7 @@
             margin: 0;
             padding-left: 5px;
         }
-        #indicator3{
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            padding-left: 5px;
-        }
-        #indicator4{
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            padding-left: 5px;
-        }
-        #indicator5{
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            padding-left: 5px;
-        }
-        #indicator6{
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            padding-left: 5px;
-        }
-        #indicator7{
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            padding-left: 5px;
-        }
-        #indicator8{
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            padding-left: 5px;
-        }
-        #indicator9{
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            padding-left: 5px;
-        }
-        #indicator10{
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            padding-left: 5px;
-        }
+        
         .graf_vlevo {
           padding: 50px;
           padding-left: 150px;    
@@ -132,6 +106,10 @@
           font-family: 'Montserrat', sans-serif;
           text-align: center;
         }
+        .grafy {
+          height: 320px;
+        }
+       
                
     </style>
 </head>
@@ -140,7 +118,8 @@
   <header>
         {% block header %}
         <img id="N4G" src="\static\N4G.png" alt="logo_N4G" style="float: left; margin: 30px 130px 30px 30px; border-radius: 10%" height="100px" weight="100px">
-        <h1>VIZUALIZACE INDIKÁTORŮ</h1>
+        <h1>Capacity of gas TSO's</h1>
+
         {% endblock %}
     </header>
     <div id="content">

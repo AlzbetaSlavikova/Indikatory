@@ -3,14 +3,30 @@
 {% block header %}
 
 {{ super() }}
+<h2>online data from ENTSOG</h2>
 {% endblock %}
 
 {% block content %}
+<div class = "uvod">
+<p>
+  Aplikace stahuje online data z <em>Transparency platform ENTSOG</em>. Pro zobrazení indikátorů si prosím zvolte typ grafu.
+</p>
+  </div>
+<section class = "grafy">
     <div class="graf_vlevo" style="float: left;">
       <div class="nadpis_grafu_vlevo">Graf Entry/Exit</div><br>
-    <a href="\graf_E"><img src="/static/Graf_EE.png" alt="Graf_Entry/Exit" height="150px" width="300px"></a></div>
+      <a href="\graf_E"><img src="/static/Graf_EE.png" alt="Graf_Entry/Exit" height="150px" width="300px"></a></div>
     <div class="graf_vpravo" style="float: right;">
       <div class="nadpis_grafu_vpravo">Graf Indikátorů</div><br>
-    <a href="\graf_I"><img src="/static/Graf2.jpg" alt="Graf_Indicators" height="150px" width="300px"></a></div>
-    
+      <a href="\graf_I"><img src="/static/Graf2.jpg" alt="Graf_Indicators" height="150px" width="300px"></a></div>
+    </div>
+</section>
+<div id="popis">    
+      <p> 
+        Po kliknutí na <strong>Graf Entry/Exit</strong> se zobrazí formulář, kde můžete vybrat požadovaného operátora, IP, indikátor a časové období pro zobrazení v jednom grafu současně pro hodnoty entry i exit. 
+      </p>
+      <p>
+        Po kliknutí na <strong>Graf indikátorů</strong> se zobrazí formuláře, kde můžete vybrat operátora, IP, entry/exit, indikátor a časové období, graf zobrazí vždy jeden směr toku plynu.
+      </p>
+    </div>     
 {% endblock %}
