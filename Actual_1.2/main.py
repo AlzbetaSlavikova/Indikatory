@@ -108,7 +108,7 @@ def render_plot():
     response_2 = requests.get(url_exit)  
     if response_2.status_code == 200:
             
-      r_exit = response.json()
+      r_exit = response_2.json()
       seznam_exit = []
 
       for x in r_exit['operationaldatas']:
@@ -143,8 +143,7 @@ def render_plot():
 
 # dohledá hodnotu pro každé datum v daném období - ENTRY
     hodnoty_entry = []
-    if response_1 == 200:
-      for datum in datumy:
+    for datum in datumy:
         for hodnota in seznam_entry:
           if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
               hodnoty_entry.append(hodnota['value'])
@@ -153,32 +152,29 @@ def render_plot():
 
 # dohledá hodnotu pro každé datum v dané období - EXIT
     hodnoty_exit = []
-    if response_2 == 200:
-      for datum in datumy:
+    for datum in datumy:
         for hodnota in seznam_exit:
           if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
                 hodnoty_exit.append(hodnota['value'])
                 break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
     technical_capacity_exit = []
-    if response_2 == 200:
-      for hodnota in seznam_exit:
-        if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Waidhaus':
-           technical_capacity_exit.append('1071472000')
+    for hodnota in seznam_exit:
+        if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Lanžhot':
+           technical_capacity_exit.append('913680000')
 
          # if hodnota['operatorLabel'] == 'Open Grid Europe' and hodnota['pointLabel']== 'Waidhaus':
           #  technical_capacity_exit.append('0')
             
 
     technical_capacity_entry = []
-    if response_1 == 200:
-      for hodnota in seznam_entry:
-        if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Waidhaus':
-            technical_capacity_entry.append('-120000000')
+    for hodnota in seznam_entry:
+        if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Lanžhot':
+            technical_capacity_entry.append('-1640413000')
     
-      for hodnota in seznam_entry:        #zatím nevím, proč nefunguje zadání obojího
-        if hodnota['operatorLabel'] == 'Open Grid Europe' and hodnota['pointLabel']== 'Waidhaus':
-            technical_capacity_entry.append('906900000')
+      #for hodnota in seznam_entry:        #zatím nevím, proč nefunguje zadání obojího
+      #  if hodnota['operatorLabel'] == 'Open Grid Europe' and hodnota['pointLabel']== 'Waidhaus':
+       #     technical_capacity_entry.append('906900000')
           
 
     return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit, technical_capacity_exit,  technical_capacity_entry))
