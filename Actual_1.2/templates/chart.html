@@ -21,7 +21,7 @@
         data.addRows([
 
             {% for datum, entry, exit_ , technical_capacity_exit, technical_capacity_entry in data_rows %}
-                [ "{{ datum }}", {{ entry }}, {{ exit_ }}, {{ technical_capacity_exit }}, {{ technical_capacity_entry}}]
+                [ "{{ datum }}", {{ -entry }}, {{ exit_ }}, {{ technical_capacity_exit }}, {{ technical_capacity_entry}}]
                 // new Date(datum).toISOString()
                 {% if not loop.last %},{% endif %}    
             {% endfor %}
@@ -31,11 +31,13 @@
         var options = {
         title: 'IP Entry-Exit',
         vAxis: {title: 'kWh/d'},
-        isStacked: true,
-        colors: ['#ADFF2F', '#00BFFF', '#144069', '#144069']
+        isStacked: false,
+        colors: ['#ADFF2F', '#00BFFF', '#144069', '#144069'],
+        seriesType: 'steppedArea',
+        series: {3: {type: 'line'},2: {type: 'line'}},
         };
 
-        var chart = new google.visualization.SteppedAreaChart(document.getElementById('chart_div'));
+        var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
 
         chart.draw(data, options);
     }

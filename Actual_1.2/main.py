@@ -22,7 +22,6 @@ class MultiCheckboxField(SelectMultipleField):
 class EFormular(FlaskForm):
     operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("BE-TSO-0001", "Fluxys Belgium"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System"),("CZ-TSO-0001", "Moravia GS"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz"),("DE-TSO-0001","Gastransport")])
     point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Oberkappel (OGE)","Oberkappel"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany"),("VGS Moravia", "Moravia")])
-    
     indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
@@ -32,7 +31,6 @@ class IFormular(FlaskForm):
     point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Oberkappel (OGE)","Oberkappel"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany")])
     direction = SelectField("Entry/Exit", choices=[("Entry", "Entry"),("Exit", "Exit")])
     indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
-    indicator2 = SelectField("Indikátor2", choices=[("Firm Booked", "Firm Booked Capacity"),("","")])#pouze v případě, že by se indikátorům dávala zvlášť funkce!!
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
 
@@ -60,11 +58,11 @@ def index2():
     form = IFormular()
 
     return render_template("formular2.html", form = form)
-    
-# Na adrese /plot zobrazí šablonu "plot.html", která obsahuje obrázek "plot.png"
+
 @app.route("/plot", methods = ["GET"])
 def plot():
-    return render_template("plot.html")
+    return render_template("plot.html")  
+
 
 # Když prohlížeč požádá o zobrazení obrázku plot.png, tak se zavolá tahle route,
 # ve které my obrázek s grafem vygenerujeme
@@ -82,15 +80,13 @@ def render_plot():
     
     url_entry = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator}&from={date_from}&to={date_to}&directionKey=entry&limit=-1'
     
-    r_entry=requests.get(url_entry).json()
+    response_1 = requests.get(url_entry)
+    if response_1.status_code == 200: #pro případ, že API nevrátí žádnou hodnotu, resp. chybu - opakuje se níže
     
-    url_exit = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator}&from={date_from}&to={date_to}&directionKey=exit&limit=-1'
-    
-    r_exit=requests.get(url_exit).json()
+      r_entry = response_1.json()
+      seznam_entry = []
 
-    seznam_entry = []
-
-    for x in r_entry['operationaldatas']:
+      for x in r_entry['operationaldatas']:
         periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
         periodFrom_new = periodFrom.date()
         periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
@@ -106,12 +102,16 @@ def render_plot():
             "pointLabel": x['pointLabel'],
             "pointKey": x['pointKey']}
         seznam_entry.append(hodnoty)
-# print(seznam_entry)
 
+    url_exit = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator}&from={date_from}&to={date_to}&directionKey=exit&limit=-1'
 
-    seznam_exit = []
+    response_2 = requests.get(url_exit)  
+    if response_2.status_code == 200:
+            
+      r_exit = response.json()
+      seznam_exit = []
 
-    for x in r_exit['operationaldatas']:
+      for x in r_exit['operationaldatas']:
         periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
         periodFrom_new = periodFrom.date()
         periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
@@ -128,8 +128,6 @@ def render_plot():
             "pointKey": x['pointKey']
             }
         seznam_exit.append(hodnoty)
-# print(seznam_exit)
-
 
 # vytvoříme seznam všech datumů, které jsou v zadaném období, je možné použít pro oba API call
     
@@ -140,46 +138,50 @@ def render_plot():
 
     datumy = []
     for i in range(delta.days + 1):
-        dnes = start + timedelta(days=i)
-        datumy.append(dnes)
-#print(datumy)
+      dnes = start + timedelta(days=i)
+      datumy.append(dnes)
 
-# dohledá hodnotu pro každé datum v dané období - ENTRY
+# dohledá hodnotu pro každé datum v daném období - ENTRY
     hodnoty_entry = []
-
-    for datum in datumy:
+    if response_1 == 200:
+      for datum in datumy:
         for hodnota in seznam_entry:
-            if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
-                hodnoty_entry.append(hodnota['value'])
-                break #ukončí podmínku pokud je splněna a vrátí se na začátek
-
-# print(hodnoty_entry)
-
+          if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
+              hodnoty_entry.append(hodnota['value'])
+              break #ukončí podmínku pokud je splněna a vrátí se na začátek
+  
 
 # dohledá hodnotu pro každé datum v dané období - EXIT
     hodnoty_exit = []
-
-    for datum in datumy:
+    if response_2 == 200:
+      for datum in datumy:
         for hodnota in seznam_exit:
-            if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
+          if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
                 hodnoty_exit.append(hodnota['value'])
                 break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
     technical_capacity_exit = []
+    if response_2 == 200:
+      for hodnota in seznam_exit:
+        if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Waidhaus':
+           technical_capacity_exit.append('1071472000')
 
-    for hodnota in seznam_exit:
-          if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Waidhaus':
-            technical_capacity_exit.append('-1071472000')
-            break
+         # if hodnota['operatorLabel'] == 'Open Grid Europe' and hodnota['pointLabel']== 'Waidhaus':
+          #  technical_capacity_exit.append('0')
+            
 
     technical_capacity_entry = []
+    if response_1 == 200:
+      for hodnota in seznam_entry:
+        if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Waidhaus':
+            technical_capacity_entry.append('-120000000')
+    
+      for hodnota in seznam_entry:        #zatím nevím, proč nefunguje zadání obojího
+        if hodnota['operatorLabel'] == 'Open Grid Europe' and hodnota['pointLabel']== 'Waidhaus':
+            technical_capacity_entry.append('906900000')
+          
 
-    for hodnota in seznam_entry:
-          if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Waidhaus':
-            technical_capacity_entry.append('120000000')
-            break
-
-    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit, technical_capacity_exit, technical_capacity_entry))
+    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit, technical_capacity_exit,  technical_capacity_entry))
  
 
 @app.route("/plot.png", methods = ["GET"])
@@ -196,19 +198,14 @@ def render_plot_I():
     date_from = iso_date_from.strftime("%d-%m-%Y")
     date_to = iso_date_to.strftime("%d-%m-%Y")
    
-    for i in indicator:  
-      url_1 = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={i}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
+    #for i in indicator:  
+    url_1 = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
 
-      r_1=requests.get(url_1).json()
-      print(indicator)
+    r_1=requests.get(url_1).json()
+      
+    seznam = []
 
-    #url_2 = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator2}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
-    
-    #r_2=requests.get(url_2).json()
-
-      seznam_1 = []
-
-      for x in r_1['operationaldatas']:
+    for x in r_1['operationaldatas']:
         periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
         periodFrom_new = periodFrom.date()
         periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
@@ -223,7 +220,7 @@ def render_plot_I():
             "directionKey": x['directionKey'],
             "pointLabel": x['pointLabel'],
             "pointKey": x['pointKey']}
-        seznam_1.append(hodnoty)
+        seznam.append(hodnoty)
 
   #  for index, req in enumerate(requests):
   #    method = req['method']
@@ -242,45 +239,25 @@ def render_plot_I():
     #  response.append({"status": response.status_code, "response": _read_response(response)})
    # return make_response(json.dumps(responses), 207, HEADERS)
 
-      seznam_2 = []
-
-      for x in r_2['operationaldatas']:
-        periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
-        periodFrom_new = periodFrom.date()
-        periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
-        periodTo_new = periodTo.date()
-        hodnoty = {
-            "value": x['value'],
-            "periodFrom": periodFrom_new,
-            "periodTo": periodTo_new,
-            "operatorLabel": x['operatorLabel'],
-            "interruptionType": x['interruptionType'],
-            "indicator": x['indicator'],
-            "directionKey": x['directionKey'],
-            "pointLabel": x['pointLabel'],
-            "pointKey": x['pointKey']
-            }
-        seznam_2.append(hodnoty)
-
 # vytvoříme seznam všech datumů, které jsou v zadaném období, je možné použít pro oba API call
     
-      start = iso_date_from
-      end = iso_date_to
+    start = iso_date_from
+    end = iso_date_to
 
-      delta = end - start
+    delta = end - start
 
-      datumy = []
-      for i in range(delta.days + 1):
-        dnes = start + timedelta(days=i)
-        datumy.append(dnes)
+    datumy = []
+    for i in range(delta.days + 1):
+      dnes = start + timedelta(days=i)
+      datumy.append(dnes)
 
 # dohledá hodnotu pro každé datum v dané období - ENTRY
-      hodnoty_1 = []
+    hodnoty = []
 
-      for datum in datumy:
-        for hodnota in seznam_1:
-            if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
-                hodnoty_1.append(hodnota['value'])
+    for datum in datumy:
+      for hodnota in seznam:
+         if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
+                hodnoty.append(hodnota['value'])
                 break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
     #print(hodnoty_1)
@@ -295,7 +272,7 @@ def render_plot_I():
    #             hodnoty_2.append(hodnota['value'])
     #            break #ukončí podmínku pokud je splněna a vrátí se na začátek
 
-      return render_template('chart2.html', data_rows = zip(datumy, hodnoty_1))
+    return render_template('chart2.html', data_rows = zip(datumy, hodnoty))
 
 
 
