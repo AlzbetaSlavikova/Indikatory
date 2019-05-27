@@ -29,7 +29,7 @@ class EFormular(FlaskForm):
 class IFormular(FlaskForm):
     operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("BE-TSO-0001", "Fluxys Belgium"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System"),("CZ-TSO-0001", "Moravia GS"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz")])
     point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Oberkappel (OGE)","Oberkappel"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany")])
-    direction = SelectField("Entry/Exit", choices=[("Entry", "Entry"),("Exit", "Exit")])
+    direction = SelectField("Entry/Exit", choices=[("entry", "Entry"),("exit", "Exit")])
     indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
@@ -143,7 +143,8 @@ def render_plot():
 
 # dohledá hodnotu pro každé datum v daném období - ENTRY
     hodnoty_entry = []
-    for datum in datumy:
+    if response_1.status_code == 200:
+      for datum in datumy:
         for hodnota in seznam_entry:
           if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
               hodnoty_entry.append(hodnota['value'])
@@ -152,25 +153,54 @@ def render_plot():
 
 # dohledá hodnotu pro každé datum v dané období - EXIT
     hodnoty_exit = []
-    for datum in datumy:
+    if response_2.status_code == 200:
+      for datum in datumy:
         for hodnota in seznam_exit:
           if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
-                hodnoty_exit.append(hodnota['value'])
-                break #ukončí podmínku pokud je splněna a vrátí se na začátek
+              hodnoty_exit.append(hodnota['value'])
+              break #ukončí podmínku pokud je splněna a vrátí se na začátek
+    #hodnoty technických kapacit na jednotlivých bodech, operátorech a směrech - musíme nějak domyslet, jak z toho udělat dlouhou linku přes celý graf a ne jeden bod
+    technical = [
+      {'operatorLabel':'NET4GAS','pointLabel':'Lanžhot','directionKey':'entry','value':-1640413000},
+      {'operatorLabel':'NET4GAS','pointLabel':'Lanžhot','directionKey':'exit', 'value':913680000},{'operatorLabel':'eustream','pointLabel':'Lanžhot','directionKey':'entry','value':-696800000},
+      {'operatorLabel':'eustream','pointLabel':'Lanžhot','directionKey':'exit','value':400400000},
+      {'operatorLabel':'NET4GAS','pointLabel':'Waidhaus','directionKey':'entry','value':-120000000},
+      {'operatorLabel':'NET4GAS','pointLabel':'Waidhaus','directionKey':'exit','value':1071742000},
+      {'operatorLabel':'Open Grid Europe','pointLabel':'Waidhaus','directionKey':'entry','value':0},
+      {'operatorLabel':'Open Grid Europe','pointLabel':'Waidhaus','directionKey':'exit','value':906900000},
+      {'operatorLabel':'NET4GAS','pointLabel':'Olbernhau','directionKey':'entry','value':-367000000},
+      {'operatorLabel':'NET4GAS','pointLabel':'Olbernhau','directionKey':'exit','value':0},
+      {'operatorLabel':'Gascade','pointLabel':'Olbernhau','directionKey':'entry','value':-367000000},
+      {'operatorLabel':'Gascade','pointLabel':'Olbernhau','directionKey':'exit','value':325090000},
+      {'operatorLabel':'NET4GAS','pointLabel':'STEGAL','directionKey':'entry','value':0},
+      {'operatorLabel':'NET4GAS','pointLabel':'STEGAL','directionKey':'exit','value':290136000},
+      {'operatorLabel':'Gascade','pointLabel':'STEGAL','directionKey':'entry','value':-302670000},
+      {'operatorLabel':'Gascade','pointLabel':'STEGAL','directionKey':'exit','value':0},
+      {'operatorLabel':'NET4GAS','pointLabel':'OPAL','directionKey':'entry','value':-1104838000},
+      {'operatorLabel':'NET4GAS','pointLabel':'OPAL','directionKey':'exit','value':0},
+      {'operatorLabel':'Gascade','pointLabel':'OPAL','directionKey':'entry','value':0},
+      {'operatorLabel':'Gascade','pointLabel':'OPAL','directionKey':'exit','value':761498000},
+      {'operatorLabel':'Gascade','pointLabel':'Mallnow','directionKey':'entry','value':-931500000},
+      {'operatorLabel':'Gascade','pointLabel':'Mallnow','directionKey':'exit','value':0},
+      {'operatorLabel':'Gaz-system','pointLabel':'Kondratki','directionKey':'entry','value':-1024300000},
+      {'operatorLabel':'Gaz-system','pointLabel':'Kondratki','directionKey':'exit','value':0},
+      {'operatorLabel':'Moravia GS','pointLabel':'Moravia','directionKey':'entry','value':-53675000},
+      {'operatorLabel':'Moravia GS','pointLabel':'Moravia','directionKey':'exit','value':89270000},
+      ]      
 
     technical_capacity_exit = []
-    for hodnota in seznam_exit:
-        if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Lanžhot':
-           technical_capacity_exit.append('913680000')
-
-         # if hodnota['operatorLabel'] == 'Open Grid Europe' and hodnota['pointLabel']== 'Waidhaus':
-          #  technical_capacity_exit.append('0')
-            
-
+    if response_2.status_code == 200:
+      for hodnota in seznam_exit:
+        for i in technical: 
+          if hodnota['operatorLabel'] == i['operatorLabel'] and hodnota['pointLabel'] == i['pointLabel'] and hodnota['directionKey'] == i['directionKey']:
+            technical_capacity_exit.append(i['value'])
+     
     technical_capacity_entry = []
-    for hodnota in seznam_entry:
-        if hodnota['operatorLabel'] == 'NET4GAS' and hodnota['pointLabel']== 'Lanžhot':
-            technical_capacity_entry.append('-1640413000')
+    if response_1.status_code == 200:
+      for hodnota in seznam_entry:
+        for i in technical: 
+          if hodnota['operatorLabel'] == i['operatorLabel'] and hodnota['pointLabel'] == i['pointLabel'] and hodnota  ['directionKey'] == i['directionKey']:
+            technical_capacity_entry.append(i['value'])
     
       #for hodnota in seznam_entry:        #zatím nevím, proč nefunguje zadání obojího
       #  if hodnota['operatorLabel'] == 'Open Grid Europe' and hodnota['pointLabel']== 'Waidhaus':
