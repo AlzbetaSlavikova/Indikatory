@@ -16,12 +16,12 @@
         data.addColumn('string', 'Date');
         data.addColumn('number', 'entry');
         data.addColumn('number', 'exit');
-        data.addColumn('number', 'technical capacity_exit');
-        data.addColumn('number', 'technical capacity_entry');
+        data.addColumn('number', 'technická kapacita exit');
+        data.addColumn('number', 'technická kapacita entry');
         data.addRows([
 
             {% for datum, entry, exit_ , technical_capacity_exit, technical_capacity_entry in data_rows %}
-                [ "{{ datum }}", {{ -entry }}, {{ exit_ }}, {{ technical_capacity_exit }}, {{ technical_capacity_entry}}]
+                [ "{{ datum }}", {{ -entry }}, {{ exit_ }}, {{ technical_capacity_exit }}, {{ technical_capacity_entry }}]
                 // new Date(datum).toISOString()
                 {% if not loop.last %},{% endif %}    
             {% endfor %}
@@ -29,7 +29,7 @@
         ]);
 
         var options = {
-        title: 'IP Entry-Exit',
+        title: 'IP Entry / Exit',
         vAxis: {title: 'kWh/d'},
         isStacked: false,
         colors: ['#ADFF2F', '#00BFFF', '#144069', '#144069'],
