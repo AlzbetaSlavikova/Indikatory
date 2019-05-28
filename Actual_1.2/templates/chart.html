@@ -21,11 +21,10 @@
         data.addRows([
 
             {% for datum, entry, exit_ , technical_capacity_exit, technical_capacity_entry in data_rows %}
-                [ "{{ datum }}", {{ -entry }}, {{ exit_ }}, {{ technical_capacity_exit }}, {{ technical_capacity_entry }}]
+                [ "{{ datum }}", {{ entry }}, {{ -exit_ }}, {{ technical_capacity_exit }}, {{ technical_capacity_entry }}]
                 // new Date(datum).toISOString()
                 {% if not loop.last %},{% endif %}    
-            {% endfor %}
-          
+            {% endfor %}  
         ]);
 
         var options = {
