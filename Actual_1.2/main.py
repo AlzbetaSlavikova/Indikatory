@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify, Response, request
 import requests
 from flask_wtf import FlaskForm
-from wtforms import SelectField, widgets, RadioField, DateField, SelectMultipleField
+from wtforms import SelectField, widgets, RadioField, DateField, SelectMultipleField, FieldList, FormField
 from wtforms.fields.html5 import DateField
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -19,23 +19,18 @@ class MultiCheckboxField(SelectMultipleField):
   widget= widgets.ListWidget(prefix_label=False)
   option_widget= widgets.CheckboxInput()
 
-class OperatorDetail(FlaskForm):
-  operator_id=SelectField(u'Operator', coerce = int)
-
-def edit_point(request, id):
-  point = Point.query.get(id)
-  form = OperatorDetail(request.POST, obj=point)
-  form.operator_id.choices = [(g.id, g.name) for g in Operator.query.order_by('name')]
-
 class EFormular(FlaskForm):
-    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System"),("CZ-TSO-0001", "Moravia GS"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz"),("DE-TSO-0001","Gastransport")])
+    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz"),("DE-TSO-0001","Gastransport")])
     point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany"),("VGS Moravia", "Moravia"),("Cieszyn (PL) / Český Těšín (CZ)","Český Těšín")])
     indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Přerušitelná dostupná kapacita"),("Interruptible Booked", "Přerušitelná zasmluvněná kapacita"),("Interruptible Total" ,"Přerušitelná celková kapacita"),("Firm Technical", "Pevná technická kapacita"),("Firm Booked", "Pevná zasmluvněná kapacita"),("Firm Available", "Pevná dostupná kapacita"),("Planned interruption of firm capacity", "Plánované přerušení pevné kapacity"),("Unplanned interruption of firm capacity", "Neplánované přerušení pevné kapacity"),("Planned interruption of interruptible capacity", "Plánované přerušení přerušitelné kapacity"), ("Unplanned interruption of interruptible capacity", "Neplánované přerušení přerušitelné kapacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
 
+class OperatorsForm(FlaskForm):
+    operators = FieldList(FormField(EFormular), min_entries=1)
+
 class IFormular(FlaskForm):
-    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System"),("CZ-TSO-0001", "Moravia GS"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz")])
+    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz")])
     point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany"),("VGS Moravia", "Moravia"),("Cieszyn (PL) / Český Těšín (CZ)","Český Těšín")])
     direction = SelectField("Entry/Exit", choices=[("entry", "Entry"),("exit", "Exit")])
     indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Přerušitelná dostupná kapacita"),("Interruptible Booked", "Přerušitelná zasmluvněná kapacita"),("Interruptible Total" ,"Přerušitelná celková kapacita"),("Firm Technical", "Pevná technická kapacita"),("Firm Booked", "Pevná zasmluvněná kapacita"),("Firm Available", "Pevná dostupná kapacita"),("Planned interruption of firm capacity", "Plánované přerušení pevné kapacity"),("Unplanned interruption of firm capacity", "Neplánované přerušení pevné kapacity"),("Planned interruption of interruptible capacity", "Plánované přerušení přerušitelné kapacity"), ("Unplanned interruption of interruptible capacity", "Neplánované přerušení přerušitelné kapacity")])
@@ -164,7 +159,8 @@ def render_plot():
           if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
               hodnoty_entry.append(hodnota['value'])
               break #ukončí podmínku pokud je splněna a vrátí se na začátek
-  
+    else:
+      hodnoty_entry.append('0')
 
 # dohledá hodnotu pro každé datum v dané období - EXIT
     hodnoty_exit = []
@@ -174,6 +170,8 @@ def render_plot():
           if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
               hodnoty_exit.append(hodnota['value'])
               break #ukončí podmínku pokud je splněna a vrátí se na začátek
+    else:
+      hodnoty_exit.append('0')
 
   #seznam technických kapacit - pevné po celý rok  
     technical = [
@@ -183,8 +181,8 @@ def render_plot():
       {'operatorKey':'SK-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit','value':-400400000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'entry','value':120000000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'exit','value':-1071742000},
-      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'entry','value':0},
-      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'exit','value':-906900000},
+      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'entry','value':906900000},
+      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'entry','value':367000000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'entry','value':367000000},
@@ -297,12 +295,14 @@ def render_plot_I():
 
 # dohledá hodnotu pro každé datum v dané období - ENTRY
     hodnoty = []
-
-    for datum in datumy:
-      for hodnota in seznam:
-         if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
+    if response_1.status_code == 200:
+      for datum in datumy:
+        for hodnota in seznam:
+          if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
                 hodnoty.append(hodnota['value'])
                 break #ukončí podmínku pokud je splněna a vrátí se na začátek
+    else:
+      hodnoty.append('0')
 
     #seznam technických kapacit - pevné po celý rok  
     technical = [
@@ -312,8 +312,8 @@ def render_plot_I():
       {'operatorKey':'SK-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit','value':-400400000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'entry','value':120000000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'exit','value':-1071742000},
-      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'entry','value':0},
-      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'exit','value':-906900000},
+      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'entry','value':906900000},
+      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'entry','value':367000000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'entry','value':367000000},
