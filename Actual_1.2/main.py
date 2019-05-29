@@ -160,7 +160,9 @@ def render_plot():
               hodnoty_entry.append(hodnota['value'])
               break #ukončí podmínku pokud je splněna a vrátí se na začátek
     else:
-      hodnoty_entry.append('0')
+      for datum in datumy:
+        if datum >= iso_date_from and datum <= iso_date_to:
+          hodnoty_entry.append(0)
 
 # dohledá hodnotu pro každé datum v dané období - EXIT
     hodnoty_exit = []
@@ -171,7 +173,9 @@ def render_plot():
               hodnoty_exit.append(hodnota['value'])
               break #ukončí podmínku pokud je splněna a vrátí se na začátek
     else:
-      hodnoty_exit.append('0')
+      for datum in datumy:
+        if datum >= iso_date_from and datum <= iso_date_to:
+          hodnoty_exit.append(0)
 
   #seznam technických kapacit - pevné po celý rok  
     technical = [
