@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="form"></div>
     <form method="GET" action="{{ url_for('render_plot') }}">
         {{ form.hidden_tag() }}
         <table>
@@ -27,5 +28,5 @@
         <img src="{{ url_for('render_plot', operator=form.operator.data, point=form.point.data, indicator=form.indicator.data, date_from=form.date_from.data, date_to=form.date_to.data) }}">
         <img src="{{ url_for('chart') }}">
     {% else %} Vyplň formulář {% endif %}
-    
+</div>    
 {% endblock %}

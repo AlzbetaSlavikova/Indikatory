@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="form">
     <form method="GET" action="{{ url_for('render_plot_I') }}">
         {{ form.hidden_tag() }}
         <table>
@@ -29,5 +30,5 @@
         <img src="{{ url_for('chart2') }}">
         <!--tady jsem označila chart2, ale netuším, jestli se to tak mělo a doplnila jsem indicator do src výše-->
     {% else %} Vyplň formulář {% endif %}
-    
+</div>    
 {% endblock %}

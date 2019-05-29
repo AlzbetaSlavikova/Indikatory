@@ -9,23 +9,35 @@
             margin: 0;
         }
         #content{
-            margin: 30px;
-            margin-left: 100px;
+            margin: 10px;
+            margin-left: 120px;
             height: 100%;
             font-family: 'Montserrat', sans-serif;
             background-color: white;
             background-size: cover;
             color: #144069;  
         }
-        #popis{
-            margin: 30px;
+        #popis1{
             margin-left: 100px;
+            width: 40%;
             height: 100%;
+            float: left;
             font-family: 'Montserrat', sans-serif;
             background-color: white;
             background-size: cover;
             color: #144069;
-            text-align: center;                      
+            text-align:justify;                      
+        }
+        #popis2{
+            margin-right: 100px;
+            width: 40%;
+            height: 100%;
+            float: right;
+            font-family: 'Montserrat', sans-serif;
+            background-color: white;
+            background-size: cover;
+            color: #144069;
+            text-align: justify;                      
         }
         header{
             min-height: 165px;
@@ -56,6 +68,11 @@
         .uvod {
           text-align: center;
           color: #144069;
+          margin: 5px;
+          margin-right: 100px;
+        }
+        .form {
+          padding-top:20px;
         }
         footer{
             position: sticky;
@@ -82,12 +99,12 @@
         }
         
         .graf_vlevo {
-          padding: 50px;
-          padding-left: 150px;    
+          padding: 30px;
+          padding-left: 100px;    
         }
         .graf_vpravo {
-          padding: 50px;
-          margin-right: 10%;
+          padding: 30px;
+          margin-right:15%;
           
         }
         .nadpis_grafu_vlevo {
@@ -109,7 +126,9 @@
         .grafy {
           height: 320px;
         }
-       
+        #chart_div {
+          padding-left: 100px;
+        }
                
     </style>
 </head>
@@ -117,7 +136,7 @@
 
   <header>
         {% block header %}
-        <img id="N4G" src="\static\N4G.png" alt="logo_N4G" style="float: left; margin: 30px 130px 30px 30px; border-radius: 10%" height="100px" weight="100px">
+        <img id="N4G" src="\static\N4G.png" alt="logo_N4G" style="float: left; margin: 30px 110px 30px 70px; border-radius: 10%" height="100px" weight="100px">
         <h1>Kapacity TSO</h1>
 
         {% endblock %}
