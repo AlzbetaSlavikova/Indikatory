@@ -20,7 +20,7 @@ class MultiCheckboxField(SelectMultipleField):
   option_widget= widgets.CheckboxInput()
 
 class EFormular(FlaskForm):
-    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz"),("DE-TSO-0001","Gastransport")])
+    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System (ISO)"),("PL-TSO-0002","Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz"),("DE-TSO-0001","Gastransport")])
     point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany"),("VGS Moravia", "Moravia"),("Cieszyn (PL) / Český Těšín (CZ)","Český Těšín")])
     indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Přerušitelná dostupná kapacita"),("Interruptible Booked", "Přerušitelná zasmluvněná kapacita"),("Interruptible Total" ,"Přerušitelná celková kapacita"),("Firm Technical", "Pevná technická kapacita"),("Firm Booked", "Pevná zasmluvněná kapacita"),("Firm Available", "Pevná dostupná kapacita"),("Planned interruption of firm capacity", "Plánované přerušení pevné kapacity"),("Unplanned interruption of firm capacity", "Neplánované přerušení pevné kapacity"),("Planned interruption of interruptible capacity", "Plánované přerušení přerušitelné kapacity"), ("Unplanned interruption of interruptible capacity", "Neplánované přerušení přerušitelné kapacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
@@ -30,7 +30,7 @@ class OperatorsForm(FlaskForm):
     operators = FieldList(FormField(EFormular), min_entries=1)
 
 class IFormular(FlaskForm):
-    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz")])
+    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System (ISO)"),("PL-TSO-0002","Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz")])
     point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany"),("VGS Moravia", "Moravia"),("Cieszyn (PL) / Český Těšín (CZ)","Český Těšín")])
     direction = SelectField("Entry/Exit", choices=[("entry", "Entry"),("exit", "Exit")])
     indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Přerušitelná dostupná kapacita"),("Interruptible Booked", "Přerušitelná zasmluvněná kapacita"),("Interruptible Total" ,"Přerušitelná celková kapacita"),("Firm Technical", "Pevná technická kapacita"),("Firm Booked", "Pevná zasmluvněná kapacita"),("Firm Available", "Pevná dostupná kapacita"),("Planned interruption of firm capacity", "Plánované přerušení pevné kapacity"),("Unplanned interruption of firm capacity", "Neplánované přerušení pevné kapacity"),("Planned interruption of interruptible capacity", "Plánované přerušení přerušitelné kapacity"), ("Unplanned interruption of interruptible capacity", "Neplánované přerušení přerušitelné kapacity")])
@@ -197,8 +197,8 @@ def render_plot():
       {'operatorKey':'DE-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointLabel':'Mallnow','directionKey':'entry','value':931500000},
       {'operatorKey':'DE-TSO-0001','pointLabel':'Mallnow','directionKey':'exit','value':0},
-      {'operatorKey':'PL-TSO-0001','pointLabel':'Kondratki','directionKey':'entry','value':1024300000},
-      {'operatorKey':'PL-TSO-0001','pointLabel':'Kondratki','directionKey':'exit','value':0},
+      {'operatorKey':'PL-TSO-0002','pointLabel':'Kondratki','directionKey':'entry','value':1024300000},
+      {'operatorKey':'PL-TSO-0002','pointLabel':'Kondratki','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Moravia','directionKey':'entry','value':53675000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Moravia','directionKey':'exit','value':-89270000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'entry','value':0},
@@ -236,15 +236,77 @@ def render_plot():
             technical_capacity_exit.append(i['value'])
    
     technical_capacity_entry = []
-    #if response_1.status_code == 200 or response_2.status_code == 200 or response_1.status_code == 404 or response_2.status_code == 404:
     for datum in datumy:
-        for i in technical: 
-          if i['operatorKey'] == operator and i['pointLabel'] == point and i['directionKey'] == 'entry':
+      for i in technical: 
+        if i['operatorKey'] == operator and i['pointLabel'] == point and i['directionKey'] == 'entry':
             technical_capacity_entry.append(i['value'])
 
-          
+    physical_flow = [
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Lanžhot','directionKey':'entry','value':23593933},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit', 'value':100503372},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Lanžhot','directionKey':'entry','value':100478674},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'entry','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'exit','value':-723304839},
+      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'entry','value':708229647},
+      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'entry','value':190633813},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'exit','value':0},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'entry','value':0},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'exit','value':-193533361},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'entry','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'exit','value':-54878},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'entry','value':91672},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'exit','value':0},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Mallnow','directionKey':'entry','value':848158637},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Mallnow','directionKey':'exit','value':-631255},
+      {'operatorKey':'PL-TSO-0001','pointLabel':'Mallnow','directionKey':'entry','value':530269},
+      {'operatorKey':'PL-TSO-0001','pointLabel':'Mallnow','directionKey':'exit','value':-848231116},
+      {'operatorKey':'PL-TSO-0001','pointLabel':'Kondratki','directionKey':'entry','value':1001247302},
+      {'operatorKey':'PL-TSO-0001','pointLabel':'Kondratki','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Moravia','directionKey':'entry','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Moravia','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'entry','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'exit','value':-5167375432},
+      {'operatorKey':'PL-TSO-0002','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'entry','value':7078499},
+      {'operatorKey':'PL-TSO-0002','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'entry','value':251769},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'exit','value':-14733304},
+      {'operatorKey':'DE-TSO-0003','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'entry','value':14720812},
+      {'operatorKey':'DE-TSO-0003','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'exit','value':-574821},
+      {'operatorKey':'AT-TSO-0001','pointLabel':'Baumgarten','directionKey':'entry','value':95443745},
+      {'operatorKey':'AT-TSO-0001','pointLabel':'Baumgarten','directionKey':'exit','value':0},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Baumgarten','directionKey':'entry','value':0},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Baumgarten','directionKey':'exit','value':0},
+      {'operatorKey':'AT-TSO-0003','pointLabel':'Baumgarten','directionKey':'entry','value':931596649},
+      {'operatorKey':'AT-TSO-0003','pointLabel':'Baumgarten','directionKey':'exit','value':0},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'entry','value':1483219266},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'exit','value':0},
+      {'operatorKey':'UA-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'entry','value':0},
+      {'operatorKey':'UA-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'exit','value':-1487078807},
+      {'operatorKey':'IT-TSO-0001','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'entry','value':862528780},
+      {'operatorKey':'IT-TSO-0001','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'exit','value':0},
+      {'operatorKey':'AT-TSO-0003','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'entry','value':0},
+      {'operatorKey':'AT-TSO-0003','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'exit','value':-862519608},
+      {'operatorKey':'DE-TSO-0016','pointLabel':'Brandov-OPAL (DE)','directionKey':'entry','value':0},
+      {'operatorKey':'DE-TSO-0016','pointLabel':'Brandov-OPAL (DE)','directionKey':'exit','value':-872133690},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov-OPAL (DE)','directionKey':'entry','value':874540742},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov-OPAL (DE)','directionKey':'exit','value':0}  
+    ]      
+    physical_flow_exit = []
+    for datum in datumy:
+        for i in physical_flow: 
+          if i['operatorKey'] == operator and i['pointLabel'] == point and i['directionKey'] == 'exit':
+            physical_flow_exit.append(i['value'])
+   
+    physical_flow_entry = []
+    for datum in datumy:
+        for i in physical_flow: 
+          if i['operatorKey'] == operator and i['pointLabel'] == point and i['directionKey'] == 'entry':
+            physical_flow_entry.append(i['value'])
 
-    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit, technical_capacity_exit,  technical_capacity_entry))
+
+    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit, technical_capacity_exit,  technical_capacity_entry, physical_flow_entry, physical_flow_exit))
  
 
 @app.route("/plot2.png", methods = ["GET"])

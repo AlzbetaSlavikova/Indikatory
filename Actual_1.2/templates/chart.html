@@ -19,10 +19,12 @@
         data.addColumn('number', 'exit');
         data.addColumn('number', 'technická kapacita entry');
         data.addColumn('number', 'technická kapacita exit');
+        data.addColumn('number', 'průměrný fyzický tok 2017-2018 entry');
+        data.addColumn('number', 'průměrný fyzický tok 2017-2018 exit');
         data.addRows([
 
-            {% for datum, entry, exit_ , technical_capacity_exit, technical_capacity_entry in data_rows %}
-                [ "{{ datum }}", {{ entry }}, {{ -exit_ }}, {{ technical_capacity_entry }}, {{ technical_capacity_exit }}]
+            {% for datum, entry, exit_ , technical_capacity_exit, technical_capacity_entry, physical_flow_entry, physical_flow_exit in data_rows %}
+                [ "{{ datum }}", {{ entry }}, {{ -exit_ }}, {{ technical_capacity_entry }}, {{ technical_capacity_exit }}, {{ physical_flow_entry }}, {{ physical_flow_exit }}]
                 // new Date(datum).toISOString()
                 {% if not loop.last %},{% endif %}    
             {% endfor %}  
@@ -32,9 +34,9 @@
         title: 'IP Entry / Exit',
         vAxis: {title: 'kWh/d'},
         isStacked: false,
-        colors: ['#ADFF2F', '#00BFFF', '#144069', '#144069'],
+        colors: ['#ADFF2F', '#00BFFF', '#144069', '#144069', '#ffa500', '#ffa500'],
         seriesType: 'steppedArea',
-        series: {3: {type: 'line'},2: {type: 'line'}},
+        series: {3: {type: 'line'},2: {type: 'line'}, 4: {type: 'line', lineDashStyle: [4,4]}, 5: {type: 'line', lineDashStyle: [4,4]}},
         };
 
         var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
