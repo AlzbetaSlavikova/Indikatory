@@ -22,7 +22,7 @@ class MultiCheckboxField(SelectMultipleField):
 class EFormular(FlaskForm):
     operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System (ISO)"),("PL-TSO-0002","Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz"),("DE-TSO-0001","Gastransport")])
     point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany"),("VGS Moravia", "Moravia"),("Cieszyn (PL) / Český Těšín (CZ)","Český Těšín")])
-    indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Přerušitelná dostupná kapacita"),("Interruptible Booked", "Přerušitelná zasmluvněná kapacita"),("Interruptible Total" ,"Přerušitelná celková kapacita"),("Firm Technical", "Pevná technická kapacita"),("Firm Booked", "Pevná zasmluvněná kapacita"),("Firm Available", "Pevná dostupná kapacita"),("Planned interruption of firm capacity", "Plánované přerušení pevné kapacity"),("Unplanned interruption of firm capacity", "Neplánované přerušení pevné kapacity"),("Planned interruption of interruptible capacity", "Plánované přerušení přerušitelné kapacity"), ("Unplanned interruption of interruptible capacity", "Neplánované přerušení přerušitelné kapacity")])
+    indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
 
@@ -30,10 +30,10 @@ class OperatorsForm(FlaskForm):
     operators = FieldList(FormField(EFormular), min_entries=1)
 
 class IFormular(FlaskForm):
-    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System (ISO)"),("PL-TSO-0002","Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz")])
+    operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System (ISO)"),("PL-TSO-0002","Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz"),("DE-TSO-0001","Gastransport")])
     point = SelectField("IP", choices=[("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL"),("Brandov-OPAL (DE)","Brandov OPAL"),("Waidhaus" ,"Waidhaus"),("Lanžhot" ,"Lanžhot"),("Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)","HSK/Deutschendorf"),("Olbernhau (DE) / Hora Svaté Kateřiny (CZ)","Olberhau/HSK"),("Kondratki","Kondratki"),("Mallnow","Mallnow"),("Tarvisio (IT) / Arnoldstein (AT)","Tarvisio/Arnoldstein"), ("Uzhgorod (UA) - Velké Kapušany (SK)","Užhorod/Velké Kapušany"),("VGS Moravia", "Moravia"),("Cieszyn (PL) / Český Těšín (CZ)","Český Těšín")])
     direction = SelectField("Entry/Exit", choices=[("entry", "Entry"),("exit", "Exit")])
-    indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Přerušitelná dostupná kapacita"),("Interruptible Booked", "Přerušitelná zasmluvněná kapacita"),("Interruptible Total" ,"Přerušitelná celková kapacita"),("Firm Technical", "Pevná technická kapacita"),("Firm Booked", "Pevná zasmluvněná kapacita"),("Firm Available", "Pevná dostupná kapacita"),("Planned interruption of firm capacity", "Plánované přerušení pevné kapacity"),("Unplanned interruption of firm capacity", "Neplánované přerušení pevné kapacity"),("Planned interruption of interruptible capacity", "Plánované přerušení přerušitelné kapacity"), ("Unplanned interruption of interruptible capacity", "Neplánované přerušení přerušitelné kapacity")])
+    indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
 
@@ -80,10 +80,6 @@ def render_plot():
     indicator = request.args.get("indicator")
     iso_date_from = datetime.strptime(request.args.get("date_from"), "%Y-%m-%d").date()
     iso_date_to = datetime.strptime(request.args.get("date_to"), "%Y-%m-%d").date()
-
-    for x in operator:
-      if operator == 'eustream':
-        choices in point == ("Baumgarten","Baumgarten"),("Brandov STEGAL (CZ) / Stegal (DE)","Brandov STEGAL")
 
     date_from = iso_date_from.strftime("%d-%m-%Y")
     date_to = iso_date_to.strftime("%d-%m-%Y")
@@ -243,7 +239,7 @@ def render_plot():
 
     physical_flow = [
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Lanžhot','directionKey':'entry','value':23593933},
-      {'operatorKey':'CZ-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit', 'value':100503372},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit', 'value':-100503372},
       {'operatorKey':'SK-TSO-0001','pointLabel':'Lanžhot','directionKey':'entry','value':100478674},
       {'operatorKey':'SK-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'entry','value':0},
@@ -369,7 +365,6 @@ def render_plot_I():
     slovnik = {}
 
     for datum in datumy:
-        #print(datum)
         slovnik[str(datum)] = []
 
     for x in list(listy_indikatory):
@@ -379,7 +374,6 @@ def render_plot_I():
             hodnota = y['value']
             for datum in datumy:
                 if datum >= od and datum < do:
-                    #print("davam " + str(hodnota) + " do " + str(datum))
                     slovnik[datum.isoformat()].append(hodnota)
                 elif do.strftime("%d-%m-%Y") == date_to and do == datum:
                     slovnik[datum.isoformat()].append(hodnota)
@@ -513,10 +507,8 @@ def render_plot_I():
     list_merge = [a + b for a, b in zip(list_temp, list_values)]
 
 
-    # return str(list_merge)
     return render_template('chart_2.html', data_rows = list_merge, columns = indicator)
-    # return render_template('chart_2.html', data_rows = zip(list1, list2, list3))
-    # , 
+     
 
 
 
