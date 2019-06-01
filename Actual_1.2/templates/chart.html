@@ -17,10 +17,10 @@
         data.addColumn('string', 'Datum');
         data.addColumn('number', 'Entry');
         data.addColumn('number', 'Exit');
-        data.addColumn('number', 'Technická kapacita entry');
-        data.addColumn('number', 'Technická kapacita exit');
-        data.addColumn('number', 'Průměrný fyzický tok 2017-2018 entry');
-        data.addColumn('number', 'Průměrný fyzický tok 2017-2018 exit');
+        data.addColumn('number', 'Technical capacity entry');
+        data.addColumn('number', 'Technical capacity exit');
+        data.addColumn('number', 'Average physical flow 2017-2018 entry');
+        data.addColumn('number', 'Average physical flow 2017-2018 exit');
         data.addRows([
 
             {% for datum, entry, exit_ , technical_capacity_exit, technical_capacity_entry, physical_flow_entry, physical_flow_exit in data_rows %}

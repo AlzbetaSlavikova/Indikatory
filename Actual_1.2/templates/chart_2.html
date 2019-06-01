@@ -17,8 +17,8 @@
         var columns = {{ columns|safe }}
 
         data.addColumn('date', 'Date');
-        data.addColumn('number', 'Technická kapacita');
-        data.addColumn('number', 'Průměrný fyzický tok 2017-2018');
+        data.addColumn('number', 'Technical capacity');
+        data.addColumn('number', 'Average physical flow 2017-2018');
         for (column of columns) {
             console.log(column)
             data.addColumn('number', column);
