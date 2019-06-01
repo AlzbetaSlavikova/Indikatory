@@ -2,7 +2,7 @@
 {% block header %}
 
 {{ super() }}
-<h2>Graf indikátorů - zobrazení</h2>
+GoogleChart
 {% endblock %}
 
 {% block content %}
@@ -35,7 +35,7 @@
         title: 'Graf indikátorů',
         vAxis: {title: 'kWh/d'},
         isStacked: false,
-        colors: ['#144069', '#ffa500', '#f2f237', '#40e0d0', '#bd97c6', '#dc143c', '#00ced1'],
+        colors: ['#008000', '#ffa500', '#ffff00', '#40e0d0', '#ba55d3', '#dc143c', '#00ced1'],
         seriesType: 'steppedArea',
         series: {0: {type: 'line'}, 1: {type: 'line', lineDashStyle: [4,4]}},
         };
