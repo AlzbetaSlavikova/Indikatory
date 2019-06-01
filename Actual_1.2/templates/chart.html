@@ -14,27 +14,29 @@
 
     function drawChart() {
     var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Datum');
+        
+        var data_rows = {{ data_rows|safe }}
+
+        data.addColumn('string', 'Date');
         data.addColumn('number', 'Entry');
         data.addColumn('number', 'Exit');
         data.addColumn('number', 'Technical capacity entry');
         data.addColumn('number', 'Technical capacity exit');
         data.addColumn('number', 'Average physical flow 2017-2018 entry');
         data.addColumn('number', 'Average physical flow 2017-2018 exit');
-        data.addRows([
 
-            {% for datum, entry, exit_ , technical_capacity_exit, technical_capacity_entry, physical_flow_entry, physical_flow_exit in data_rows %}
-                [ "{{ datum }}", {{ entry }}, {{ -exit_ }}, {{ technical_capacity_entry }}, {{ technical_capacity_exit }}, {{ physical_flow_entry }}, {{ physical_flow_exit }}]
-                // new Date(datum).toISOString()
-                {% if not loop.last %},{% endif %}    
-            {% endfor %}  
-        ]);
+        // for (row of data_rows) {
+        //     console.log(row)
+        //     row[0] = new Date(row[0])
+        // }
+
+        data.addRows(data_rows);
 
         var options = {
         title: 'Graf entry/exit',
         vAxis: {title: 'kWh/d'},
         isStacked: false,
-        colors: ['#90ee90', '#d8bfd8', '#144069', '#144069', '#ffa500', '#ffa500'],
+        colors: ['#48d1cc', '#fa8072', '#144069', '#144069', '#ffa500', '#ffa500'],
         seriesType: 'steppedArea',
         series: {3: {type: 'line'}, 2: {type: 'line'}, 4: {type: 'line', lineDashStyle: [4,4]}, 5: {type: 'line', lineDashStyle: [4,4]}},
         };

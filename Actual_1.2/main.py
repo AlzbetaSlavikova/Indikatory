@@ -22,7 +22,7 @@ class MultiCheckboxField(SelectMultipleField):
 class EFormular(FlaskForm):
     operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System (ISO)"),("PL-TSO-0002","Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz"),("DE-TSO-0001","Gastransport")])
     point = SelectField("IP", choices=[("ITP-00168","Baumgarten"),("ITP-00123","Brandov STEGAL"),("ITP-00010","Brandov OPAL"),("ITP-00139" ,"Waidhaus"),("ITP-00051" ,"Lanžhot"),("ITP-00015","HSK/Deutschendorf"),("ITP-00150","Olberhau/HSK"),("ITP-00104","Kondratki"),("ITP-00096","Mallnow"),("ITP-00040","Tarvisio/Arnoldstein"), ("ITP-00117","Užhorod/Velké Kapušany"),("UGS-00446", "Moravia"),("ITP-00158","Český Těšín")])
-    indicator = RadioField("Indikátor", choices=[("Interruptible Available" ,"Přerušitelná dostupná kapacita"),("Interruptible Booked", "Přerušitelná zasmluvněná kapacita"),("Interruptible Total" ,"Přerušitelná celková kapacita"),("Firm Technical", "Pevná technická kapacita"),("Firm Booked", "Pevná zasmluvněná kapacita"),("Firm Available", "Pevná dostupná kapacita"),("Planned interruption of firm capacity", "Plánované přerušení pevné kapacity"),("Unplanned interruption of firm capacity", "Neplánované přerušení pevné kapacity"),("Planned interruption of interruptible capacity", "Plánované přerušení přerušitelné kapacity"), ("Unplanned interruption of interruptible capacity", "Neplánované přerušení přerušitelné kapacity")])
+    indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
 
@@ -72,7 +72,7 @@ def plot2():
 # Když prohlížeč požádá o zobrazení obrázku plot.png, tak se zavolá tahle route,
 # ve které my obrázek s grafem vygenerujeme
 
-@app.route("/plot.png", methods = ["GET"])
+@app.route("/chart_1", methods = ["GET"])
 def render_plot():
     # import pro graf
     operator = request.args.get("operator")
@@ -152,9 +152,12 @@ def render_plot():
     if response_1.status_code == 200:
       for datum in datumy:
         for hodnota in seznam_entry:
-          if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
+          if datum >= hodnota['periodFrom'] and datum < hodnota['periodTo']:
               hodnoty_entry.append(hodnota['value'])
               break #ukončí podmínku pokud je splněna a vrátí se na začátek
+          elif hodnota['periodTo'].strftime("%d-%m-%Y") == date_to and hodnota['periodTo'] == datum:
+              hodnoty_entry.append(hodnota['value'])
+
     else:
       for datum in datumy:
         if datum >= iso_date_from and datum <= iso_date_to:
@@ -166,8 +169,11 @@ def render_plot():
       for datum in datumy:
         for hodnota in seznam_exit:
           if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
-              hodnoty_exit.append(hodnota['value'])
+              hodnoty_exit.append(-hodnota['value'])
               break #ukončí podmínku pokud je splněna a vrátí se na začátek
+          elif hodnota['periodTo'].strftime("%d-%m-%Y") == date_to and hodnota['periodTo'] == datum:
+              hodnoty_exit.append(hodnota['value'])
+
     else:
       for datum in datumy:
         if datum >= iso_date_from and datum <= iso_date_to:
@@ -239,7 +245,7 @@ def render_plot():
 
     physical_flow = [
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':23593933},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'exit', 'value':100503372},
+      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'exit', 'value':-100503372},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':100478674},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'entry','value':0},
@@ -301,11 +307,14 @@ def render_plot():
           if i['operatorKey'] == operator and i['pointKey'] == point and i['directionKey'] == 'entry':
             physical_flow_entry.append(i['value'])
 
-
-    return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit, technical_capacity_exit,  technical_capacity_entry, physical_flow_entry, physical_flow_exit))
+    list_dates = [x.strftime("%d-%m-%Y") for x in datumy]
+    list_merge = [list(a) for a in zip(list_dates, hodnoty_entry, hodnoty_exit, technical_capacity_exit,  technical_capacity_entry, physical_flow_entry, physical_flow_exit)]
+    
+    # return str(list_merge)
+    return render_template('chart.html', data_rows = list_merge)
  
 
-@app.route("/chart_2", methods = ["GET"])
+@app.route("/plot.png", methods = ["GET"])
 def render_plot_I():
     # import pro graf I (druhý)
     operator = request.args.get("operator")
@@ -329,6 +338,7 @@ def render_plot_I():
         listy.append(url)
         listy_indikatory['lst_%s' % i] = []
         output = requests.get(url).json()
+
                 
         for x in output['operationaldatas']:
             periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
@@ -508,7 +518,7 @@ def render_plot_I():
     list_merge = [a + b for a, b in zip(list_temp, list_values)]
 
 
-    # return str(listy_indikatory)
+    # return str(list_dates)
     return render_template('chart_2.html', data_rows = list_merge, columns = indicator)
     # return render_template('chart_2.html', data_rows = zip(list1, list2, list3))
  
