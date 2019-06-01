@@ -309,44 +309,50 @@ def render_plot():
     return render_template('chart.html', data_rows = zip(datumy, hodnoty_entry, hodnoty_exit, technical_capacity_exit,  technical_capacity_entry, physical_flow_entry, physical_flow_exit))
  
 
-@app.route("/plot2.png", methods = ["GET"])
+@app.route("/chart_2", methods = ["GET"])
 def render_plot_I():
     # import pro graf I (druhý)
     operator = request.args.get("operator")
     point = request.args.get("point")
     direction = request.args.get("direction")
-    indicator = request.args.get("indicator")
-
+    indicator = request.args.getlist("indicator")
     iso_date_from = datetime.strptime(request.args.get("date_from"), "%Y-%m-%d").date()
     iso_date_to = datetime.strptime(request.args.get("date_to"), "%Y-%m-%d").date()
-
     date_from = iso_date_from.strftime("%d-%m-%Y")
     date_to = iso_date_to.strftime("%d-%m-%Y")
-   
-    #for i in indicator:  
-    url_1 = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&indicator={indicator}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
-
-    r_1=requests.get(url_1).json()
       
-    seznam = []
 
-    for x in r_1['operationaldatas']:
-        periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
-        periodFrom_new = periodFrom.date()
-        periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
-        periodTo_new = periodTo.date()
-        hodnoty = {
-            "value": x['value'],
-            "periodFrom": periodFrom_new,
-            "periodTo": periodTo_new,
-            "operatorLabel": x['operatorLabel'],
-            "interruptionType": x['interruptionType'],
-            "indicator": x['indicator'],
-            "directionKey": x['directionKey'],
-            "pointLabel": x['pointLabel'],
-            "pointKey": x['pointKey']}
-        seznam.append(hodnoty)
+    URL_PATTERN = f'https://transparency.entsog.eu/api/v1/operationaldatas?operatorKey={operator}&pointLabel={point}&from={date_from}&to={date_to}&directionKey={direction}&limit=-1'
+    URL_PATTERN_2 = URL_PATTERN + '&indicator={}'
 
+    listy_indikatory = {}
+    listy = []
+
+    for i in indicator:
+        url = URL_PATTERN_2.format(i)
+        listy.append(url)
+        listy_indikatory['lst_%s' % i] = []
+        output = requests.get(url).json()
+                
+        for x in output['operationaldatas']:
+            periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
+            periodFrom_new = periodFrom.date()
+            periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
+            periodTo_new = periodTo.date()
+            hodnoty = {
+                "value": x['value'],
+                "periodFrom": periodFrom_new,
+                "periodTo": periodTo_new,
+                "operatorLabel": x['operatorLabel'],
+                "interruptionType": x['interruptionType'],
+                "indicator": x['indicator'],
+                "directionKey": x['directionKey'],
+                "pointLabel": x['pointLabel'],
+                "pointKey": x['pointKey']
+                }
+            listy_indikatory['lst_%s' % i].append(hodnoty)
+
+    
 # vytvoříme seznam všech datumů, které jsou v zadaném období, je možné použít pro oba API call
     
     start = iso_date_from
@@ -356,82 +362,161 @@ def render_plot_I():
 
     datumy = []
     for i in range(delta.days + 1):
-      dnes = start + timedelta(days=i)
-      datumy.append(dnes)
+        dnes = start + timedelta(days=i)
+        datumy.append(dnes)
 
 # dohledá hodnotu pro každé datum v dané období - ENTRY
-    hodnoty = []
-    if response_1.status_code == 200:
-      for datum in datumy:
-        for hodnota in seznam:
-          if datum >= hodnota['periodFrom'] and datum <= hodnota['periodTo']:
-                hodnoty.append(hodnota['value'])
-                break #ukončí podmínku pokud je splněna a vrátí se na začátek
-    else:
-      hodnoty.append('0')
+    slovnik = {}
 
-    #seznam technických kapacit - pevné po celý rok  
+    for datum in datumy:
+        #print(datum)
+        slovnik[str(datum)] = []
+
+    for x in list(listy_indikatory):
+        for y in listy_indikatory[x]:
+            od = y['periodFrom']
+            do = y['periodTo']
+            hodnota = y['value']
+            for datum in datumy:
+                if datum >= od and datum < do:
+                    #print("davam " + str(hodnota) + " do " + str(datum))
+                    slovnik[datum.isoformat()].append(hodnota)
+                elif do.strftime("%d-%m-%Y") == date_to and do == datum:
+                    slovnik[datum.isoformat()].append(hodnota)
+
+
+
+    
+  #seznam technických kapacit - pevné po celý rok  
     technical = [
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Lanžhot','directionKey':'entry','value':1640413000},
-      {'operatorKey':'CZ-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit', 'value':-913680000},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit', 'value':913680000},
       {'operatorKey':'SK-TSO-0001','pointLabel':'Lanžhot','directionKey':'entry','value':696800000},
-      {'operatorKey':'SK-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit','value':-400400000},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit','value':400400000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'entry','value':120000000},
-      {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'exit','value':-1071742000},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'exit','value':1071742000},
       {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'entry','value':906900000},
       {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'entry','value':367000000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'entry','value':367000000},
-      {'operatorKey':'DE-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'exit','value':-325090000},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'exit','value':325090000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'exit','value':-290136000},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'exit','value':290136000},
       {'operatorKey':'DE-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'entry','value':302670000},
       {'operatorKey':'DE-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointLabel':'Mallnow','directionKey':'entry','value':931500000},
       {'operatorKey':'DE-TSO-0001','pointLabel':'Mallnow','directionKey':'exit','value':0},
-      {'operatorKey':'PL-TSO-0001','pointLabel':'Kondratki','directionKey':'entry','value':1024300000},
-      {'operatorKey':'PL-TSO-0001','pointLabel':'Kondratki','directionKey':'exit','value':0},
+      {'operatorKey':'PL-TSO-0002','pointLabel':'Kondratki','directionKey':'entry','value':1024300000},
+      {'operatorKey':'PL-TSO-0002','pointLabel':'Kondratki','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Moravia','directionKey':'entry','value':53675000},
-      {'operatorKey':'CZ-TSO-0001','pointLabel':'Moravia','directionKey':'exit','value':-89270000},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Moravia','directionKey':'exit','value':89270000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'exit','value':-28052000},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'exit','value':28052000},
       {'operatorKey':'PL-TSO-0001','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'entry','value':0},
       {'operatorKey':'PL-TSO-0001','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'entry','value':150900000},
-      {'operatorKey':'CZ-TSO-0001','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'exit','value':-197530000},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'exit','value':197530000},
       {'operatorKey':'DE-TSO-0003','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'entry','value':197500000},
-      {'operatorKey':'DE-TSO-0003','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'exit','value':-135300000},
+      {'operatorKey':'DE-TSO-0003','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'exit','value':135300000},
       {'operatorKey':'AT-TSO-0001','pointLabel':'Baumgarten','directionKey':'entry','value':477768000},
-      {'operatorKey':'AT-TSO-0001','pointLabel':'Baumgarten','directionKey':'exit','value':-246528000},
+      {'operatorKey':'AT-TSO-0001','pointLabel':'Baumgarten','directionKey':'exit','value':246528000},
       {'operatorKey':'SK-TSO-0001','pointLabel':'Baumgarten','directionKey':'entry','value':247520000},
-      {'operatorKey':'SK-TSO-0001','pointLabel':'Baumgarten','directionKey':'exit','value':-1570400000},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Baumgarten','directionKey':'exit','value':1570400000},
       {'operatorKey':'AT-TSO-0003','pointLabel':'Baumgarten','directionKey':'entry','value':1436064000},
       {'operatorKey':'AT-TSO-0003','pointLabel':'Baumgarten','directionKey':'exit','value':0},
       {'operatorKey':'SK-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'entry','value':2028000000},
       {'operatorKey':'SK-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'exit','value':0},
       {'operatorKey':'UA-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'entry','value':0},
-      {'operatorKey':'UA-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'exit','value':-2080000000},
+      {'operatorKey':'UA-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'exit','value':2080000000},
       {'operatorKey':'IT-TSO-0001','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'entry','value':1158796000},
       {'operatorKey':'IT-TSO-0001','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'exit','value':0},
       {'operatorKey':'AT-TSO-0003','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'entry','value':0},
-      {'operatorKey':'AT-TSO-0003','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'exit','value':-1200359000},
+      {'operatorKey':'AT-TSO-0003','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'exit','value':1200359000},
       {'operatorKey':'DE-TSO-0016','pointLabel':'Brandov-OPAL (DE)','directionKey':'entry','value':0},
-      {'operatorKey':'DE-TSO-0016','pointLabel':'Brandov-OPAL (DE)','directionKey':'exit','value':-761498000},
+      {'operatorKey':'DE-TSO-0016','pointLabel':'Brandov-OPAL (DE)','directionKey':'exit','value':761498000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov-OPAL (DE)','directionKey':'entry','value':1104838000},
       {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov-OPAL (DE)','directionKey':'exit','value':0}
-        ]       
+        ]      
 
-    technical_capacity = []
-    #if response_1.status_code == 200 or response_2.status_code == 200 or response_1.status_code == 404 or response_2.status_code == 404:
+    technical_capacity_i = []
     for datum in datumy:
-        for i in technical: 
+      for i in technical: 
+        if i['operatorKey'] == operator and i['pointLabel'] == point and i['directionKey'] == direction:
+            technical_capacity_i.append(i['value'])
+   
+
+    physical_flow = [
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Lanžhot','directionKey':'entry','value':23593933},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit', 'value':100503372},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Lanžhot','directionKey':'entry','value':100478674},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Lanžhot','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'entry','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Waidhaus','directionKey':'exit','value':723304839},
+      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'entry','value':708229647},
+      {'operatorKey':'DE-TSO-0009','pointLabel':'Waidhaus','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'entry','value':190633813},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'exit','value':0},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'entry','value':0},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Olbernhau (DE) / Hora Svaté Kateřiny (CZ)','directionKey':'exit','value':193533361},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'entry','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'exit','value':54878},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'entry','value':91672},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Brandov STEGAL (CZ) / Stegal (DE)','directionKey':'exit','value':0},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Mallnow','directionKey':'entry','value':848158637},
+      {'operatorKey':'DE-TSO-0001','pointLabel':'Mallnow','directionKey':'exit','value':631255},
+      {'operatorKey':'PL-TSO-0001','pointLabel':'Mallnow','directionKey':'entry','value':530269},
+      {'operatorKey':'PL-TSO-0001','pointLabel':'Mallnow','directionKey':'exit','value':848231116},
+      {'operatorKey':'PL-TSO-0001','pointLabel':'Kondratki','directionKey':'entry','value':1001247302},
+      {'operatorKey':'PL-TSO-0001','pointLabel':'Kondratki','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Moravia','directionKey':'entry','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Moravia','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'entry','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'exit','value':5167375432},
+      {'operatorKey':'PL-TSO-0002','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'entry','value':7078499},
+      {'operatorKey':'PL-TSO-0002','pointLabel':'Cieszyn (PL) / Český Těšín (CZ)','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'entry','value':251769},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'exit','value':14733304},
+      {'operatorKey':'DE-TSO-0003','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'entry','value':14720812},
+      {'operatorKey':'DE-TSO-0003','pointLabel':'Hora Svaté Kateřiny (CZ) / Deutschneudorf (Sayda) (DE)','directionKey':'exit','value':574821},
+      {'operatorKey':'AT-TSO-0001','pointLabel':'Baumgarten','directionKey':'entry','value':95443745},
+      {'operatorKey':'AT-TSO-0001','pointLabel':'Baumgarten','directionKey':'exit','value':0},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Baumgarten','directionKey':'entry','value':0},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Baumgarten','directionKey':'exit','value':0},
+      {'operatorKey':'AT-TSO-0003','pointLabel':'Baumgarten','directionKey':'entry','value':931596649},
+      {'operatorKey':'AT-TSO-0003','pointLabel':'Baumgarten','directionKey':'exit','value':0},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'entry','value':1483219266},
+      {'operatorKey':'SK-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'exit','value':0},
+      {'operatorKey':'UA-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'entry','value':0},
+      {'operatorKey':'UA-TSO-0001','pointLabel':'Uzhgorod (UA) - Velké Kapušany (SK)','directionKey':'exit','value':1487078807},
+      {'operatorKey':'IT-TSO-0001','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'entry','value':862528780},
+      {'operatorKey':'IT-TSO-0001','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'exit','value':0},
+      {'operatorKey':'AT-TSO-0003','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'entry','value':0},
+      {'operatorKey':'AT-TSO-0003','pointLabel':'Tarvisio (IT) / Arnoldstein (AT)','directionKey':'exit','value':862519608},
+      {'operatorKey':'DE-TSO-0016','pointLabel':'Brandov-OPAL (DE)','directionKey':'entry','value':0},
+      {'operatorKey':'DE-TSO-0016','pointLabel':'Brandov-OPAL (DE)','directionKey':'exit','value':872133690},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov-OPAL (DE)','directionKey':'entry','value':874540742},
+      {'operatorKey':'CZ-TSO-0001','pointLabel':'Brandov-OPAL (DE)','directionKey':'exit','value':0}  
+      ]      
+    physical_flow_i = []
+    for datum in datumy:
+        for i in physical_flow: 
           if i['operatorKey'] == operator and i['pointLabel'] == point and i['directionKey'] == direction:
-            technical_capacity.append(i['value'])
+            physical_flow_i.append(i['value'])
+
+    list_dates = slovnik.keys()
+    list_values = [ v for v in slovnik.values() ]
+
+    # spojí do seznamu seznamů datumy a pevné hodnoty
+    list_temp = [list(a) for a in zip(list_dates, technical_capacity_i, physical_flow_i)]
+
+    list_merge = [a + b for a, b in zip(list_temp, list_values)]
 
 
-    return render_template('chart2.html', data_rows = zip(datumy, hodnoty, technical_capacity))
-
+    # return str(list_merge)
+    return render_template('chart_2.html', data_rows = list_merge, columns = indicator)
+    # return render_template('chart_2.html', data_rows = zip(list1, list2, list3))
+    # , 
 
 
 

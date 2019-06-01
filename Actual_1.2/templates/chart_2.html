@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block header %}
+
+{{ super() }}
+GoogleChart
+{% endblock %}
+
+{% block content %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+    var data = new google.visualization.DataTable();
+        var data_rows = {{ data_rows|safe }}
+        var columns = {{ columns|safe }}
+
+        data.addColumn('date', 'Date');
+        data.addColumn('number', 'Technická kapacita');
+        data.addColumn('number', 'Průměrný fyzický tok 2017-2018');
+        for (column of columns) {
+            console.log(column)
+            data.addColumn('number', column);
+        }
+
+        for (row of data_rows) {
+            console.log(row)
+            row[0] = new Date(row[0])
+        }
+
+        data.addRows(data_rows);
+
+        var options = {
+        title: 'Graf indikátorů',
+        vAxis: {title: 'kWh/d'},
+        isStacked: false,
+        colors: ['#008000', '#ffa500', '#ffff00', '#40e0d0', '#ba55d3', '#dc143c', '#00ced1'],
+        seriesType: 'steppedArea',
+        series: {0: {type: 'line'}, 1: {type: 'line', lineDashStyle: [4,4]}},
+        };
+
+        var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+    }
+    </script>
+{% endblock %}

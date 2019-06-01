@@ -14,13 +14,13 @@
 
     function drawChart() {
     var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Date');
-        data.addColumn('number', 'entry');
-        data.addColumn('number', 'exit');
-        data.addColumn('number', 'technická kapacita entry');
-        data.addColumn('number', 'technická kapacita exit');
-        data.addColumn('number', 'průměrný fyzický tok 2017-2018 entry');
-        data.addColumn('number', 'průměrný fyzický tok 2017-2018 exit');
+        data.addColumn('string', 'Datum');
+        data.addColumn('number', 'Entry');
+        data.addColumn('number', 'Exit');
+        data.addColumn('number', 'Technická kapacita entry');
+        data.addColumn('number', 'Technická kapacita exit');
+        data.addColumn('number', 'Průměrný fyzický tok 2017-2018 entry');
+        data.addColumn('number', 'Průměrný fyzický tok 2017-2018 exit');
         data.addRows([
 
             {% for datum, entry, exit_ , technical_capacity_exit, technical_capacity_entry, physical_flow_entry, physical_flow_exit in data_rows %}
@@ -36,7 +36,7 @@
         isStacked: false,
         colors: ['#90ee90', '#d8bfd8', '#144069', '#144069', '#ffa500', '#ffa500'],
         seriesType: 'steppedArea',
-        series: {3: {type: 'line'},2: {type: 'line'}, 4: {type: 'line', lineDashStyle: [4,4]}, 5: {type: 'line', lineDashStyle: [4,4]}},
+        series: {3: {type: 'line'}, 2: {type: 'line'}, 4: {type: 'line', lineDashStyle: [4,4]}, 5: {type: 'line', lineDashStyle: [4,4]}},
         };
 
         var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));

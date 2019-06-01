@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set "VIRTUAL_ENV=C:\Users\Lenovo\Desktop\DA\czechitas_projekt\czechitas_projekt\Actual_1.2\venv"
+set "VIRTUAL_ENV=C:\Users\Lenovo\Desktop\Projekt_FINAL\czechitas_projekt\Actual_1.2\venv"
 
 if not defined PROMPT (
     set "PROMPT=$P$G"
