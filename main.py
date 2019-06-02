@@ -7,6 +7,7 @@ import random
 import io
 import numpy as np 
 from datetime import datetime, timedelta
+import logging
 
 app = Flask(__name__)
 
