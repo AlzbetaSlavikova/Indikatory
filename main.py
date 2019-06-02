@@ -3,12 +3,9 @@ import requests
 from flask_wtf import FlaskForm
 from wtforms import SelectField, widgets, RadioField, DateField, SelectMultipleField, FieldList, FormField
 from wtforms.fields.html5 import DateField
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
 import random
 import io
 import numpy as np 
-import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
@@ -26,8 +23,6 @@ class EFormular(FlaskForm):
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
 
-class OperatorsForm(FlaskForm):
-    operators = FieldList(FormField(EFormular), min_entries=1)
 
 class IFormular(FlaskForm):
     operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System (ISO)"),("PL-TSO-0002","Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz")])
@@ -62,15 +57,6 @@ def index2():
 
     return render_template("formular2.html", form = form)
 
-@app.route("/plot", methods = ["GET"])
-def plot():
-    return render_template("plot.html")  
-
-@app.route("/plot2", methods = ["GET"])
-def plot2():
-    return render_template("plot2.html")
-# Když prohlížeč požádá o zobrazení obrázku plot.png, tak se zavolá tahle route,
-# ve které my obrázek s grafem vygenerujeme
 
 @app.route("/chart_1", methods = ["GET"])
 def render_plot():
