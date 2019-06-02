@@ -18,7 +18,7 @@ class MultiCheckboxField(SelectMultipleField):
 
 class EFormular(FlaskForm):
     operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System (ISO)"),("PL-TSO-0002","Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz"),("DE-TSO-0001","Gastransport")])
-    point = SelectField("IP", choices=[("ITP-00168","Baumgarten"),("ITP-00123","Brandov STEGAL"),("ITP-00010","Brandov OPAL"),("ITP-00139" ,"Waidhaus"),("ITP-00051" ,"Lanžhot"),("ITP-00015","HSK/Deutschendorf"),("ITP-00150","Olberhau/HSK"),("ITP-00104","Kondratki"),("ITP-00096","Mallnow"),("ITP-00040","Tarvisio/Arnoldstein"), ("ITP-00117","Užhorod/Velké Kapušany"),("UGS-00446", "Moravia"),("ITP-00158","Český Těšín")])
+    point = SelectField("IP", choices=[("ITP-00168","Baumgarten (eustream)"),("ITP-00062","Baumgarten (GCA)"),("ITP-00037","Baumgarten (TAG)"),("ITP-00123","Brandov STEGAL"),("ITP-00010","Brandov OPAL"),("ITP-00139" ,"Waidhaus N4G"),("ITP-00069" ,"Waidhaus OGE"),("ITP-00051" ,"Lanžhot"),("ITP-00015","HSK/Deutschneudorf"),("ITP-00150","Olbernhau/HSK"),("ITP-00104","Kondratki"),("ITP-00096","Mallnow"),("ITP-00040","Tarvisio/Arnoldstein"), ("ITP-00117","Užhorod/Velké Kapušany"),("ITP-00158","Český Těšín")])
     indicator = RadioField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
     date_to = DateField("Datum do", format='%Y-%m-%d')
@@ -26,7 +26,7 @@ class EFormular(FlaskForm):
 
 class IFormular(FlaskForm):
     operator = SelectField("Operátor", choices=[("SK-TSO-0001", "eustream"),("DE-TSO-0001", "Gascade"),("AT-TSO-0001", "Gas Connect Austria"),("PL-TSO-0001", "Gaz-System (ISO)"),("PL-TSO-0002","Gaz-System"),("CZ-TSO-0001", "NET4GAS"),("DE-TSO-0009" ,"Open Grid Europe"),("DE-TSO-0003", "ONTRAS"),("DE-TSO-0016", "OPAL"),("IT-TSO-0001", "Snam Rete Gas"),("AT-TSO-0003","TAG"),("UA-TSO-0001", "Ukrtransgaz")])
-    point = SelectField("IP", choices=[("ITP-00168","Baumgarten"),("ITP-00123","Brandov STEGAL"),("ITP-00010","Brandov OPAL"),("ITP-00139" ,"Waidhaus"),("ITP-00051" ,"Lanžhot"),("ITP-00015","HSK/Deutschendorf"),("ITP-00150","Olberhau/HSK"),("ITP-00104","Kondratki"),("ITP-00096","Mallnow"),("ITP-00040","Tarvisio/Arnoldstein"), ("ITP-00117","Užhorod/Velké Kapušany"),("UGS-00446", "Moravia"),("ITP-00158","Český Těšín")])
+    point = SelectField("IP", choices=[("ITP-00168","Baumgarten (eustream)"),("ITP-00062","Baumgarten (GCA)"),("ITP-00037","Baumgarten (TAG)"),("ITP-00123","Brandov STEGAL"),("ITP-00010","Brandov OPAL"),("ITP-00139" ,"Waidhaus N4G"),("ITP-00069" ,"Waidhaus OGE"),("ITP-00051" ,"Lanžhot"),("ITP-00015","HSK/Deutschneudorf"),("ITP-00150","Olbernhau/HSK"),("ITP-00104","Kondratki"),("ITP-00096","Mallnow"),("ITP-00040","Tarvisio/Arnoldstein"), ("ITP-00117","Užhorod/Velké Kapušany"),("ITP-00158","Český Těšín")])
     direction = SelectField("Entry/Exit", choices=[("entry", "Entry"),("exit", "Exit")])
     indicator = MultiCheckboxField("Indikátor", choices=[("Interruptible Available" ,"Interruptible Available Capacity"),("Interruptible Booked", "Interruptible Booked Capacity"),("Interruptible Total" ,"Interruptible Total Capacity"),("Firm Technical", "Firm Technical Capacity"),("Firm Booked", "Firm Booked Capacity"),("Firm Available", "Firm Available Capacity"),("Planned interruption of firm capacity", "Planned interruption of firm capacity"),("Unplanned interruption of firm capacity", "Unplanned interruption of firm capacity"),("Planned interruption of interruptible capacity", "Planned interruption of interruptible capacity"), ("Unplanned interruption of interruptible capacity", "Unplanned interruption of interruptible capacity")])
     date_from = DateField("Datum od", format='%Y-%m-%d')
@@ -173,8 +173,8 @@ def render_plot():
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'exit','value':-400400000},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'entry','value':120000000},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'exit','value':-1071742000},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00139','directionKey':'entry','value':906900000},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00139','directionKey':'exit','value':0},
+      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'entry','value':906900000},
+      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':367000000},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':367000000},
@@ -184,25 +184,23 @@ def render_plot():
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':302670000},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'entry','value':931500000},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':0},
-      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00104','directionKey':'entry','value':1024300000},
-      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00104','directionKey':'exit','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'UGS-00446','directionKey':'entry','value':53675000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'UGS-00446','directionKey':'exit','value':-89270000},
+      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':-184800000},
+      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'entry','value':1024300000},
+      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'entry','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':-28052000},
-      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00158','directionKey':'entry','value':0},
-      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':0},
+      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'entry','value':4258416},
+      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'entry','value':150900000},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'exit','value':-197530000},
       {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'entry','value':197500000},
       {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'exit','value':-135300000},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':477768000},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':-246528000},
+      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'entry','value':477768000},
+      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'exit','value':-246528000},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':247520000},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':-1570400000},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00168','directionKey':'entry','value':1436064000},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00168','directionKey':'exit','value':0},
+      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'entry','value':1436064000},
+      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'exit','value':0},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':2028000000},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':0},
       {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':0},
@@ -236,8 +234,8 @@ def render_plot():
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'entry','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'exit','value':-723304839},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00139','directionKey':'entry','value':708229647},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00139','directionKey':'exit','value':0},
+      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'entry','value':708229647},
+      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':190633813},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':0},
@@ -252,8 +250,6 @@ def render_plot():
       {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':-848231116},
       {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'entry','value':1001247302},
       {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'exit','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'UGS-00446','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'UGS-00446','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'entry','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':-5167375432},
       {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'entry','value':7078499},
@@ -262,12 +258,12 @@ def render_plot():
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'exit','value':-14733304},
       {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'entry','value':14720812},
       {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'exit','value':-574821},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':95443745},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':0},
+      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'entry','value':95443745},
+      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'exit','value':0},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':0},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':0},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00168','directionKey':'entry','value':931596649},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00168','directionKey':'exit','value':0},
+      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'entry','value':931596649},
+      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'exit','value':0},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':1483219266},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':0},
       {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':0},
@@ -296,7 +292,7 @@ def render_plot():
     list_dates = [x.strftime("%d-%m-%Y") for x in datumy]
     list_merge = [list(a) for a in zip(list_dates, hodnoty_entry, hodnoty_exit, technical_capacity_exit,  technical_capacity_entry, physical_flow_entry, physical_flow_exit)]
     
-    # return str(list_merge)
+    
     return render_template('chart.html', data_rows = list_merge)
  
 
@@ -380,51 +376,49 @@ def render_plot_I():
   #seznam technických kapacit - pevné po celý rok  
     technical = [
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':1640413000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'exit', 'value':913680000},
+      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'exit', 'value':-913680000},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':696800000},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'exit','value':400400000},
+      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'exit','value':-400400000},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'entry','value':120000000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'exit','value':1071742000},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00139','directionKey':'entry','value':906900000},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00139','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'exit','value':-1071742000},
+      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'entry','value':906900000},
+      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':367000000},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':367000000},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':325090000},
+      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':-325090000},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':290136000},
+      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':-290136000},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':302670000},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'entry','value':931500000},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':0},
-      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00104','directionKey':'entry','value':1024300000},
-      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00104','directionKey':'exit','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'UGS-00446','directionKey':'entry','value':53675000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'UGS-00446','directionKey':'exit','value':89270000},
+      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':-184800000},
+      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'entry','value':1024300000},
+      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':28052000},
-      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00158','directionKey':'entry','value':0},
-      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':-28052000},
+      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'entry','value':4258416},
+      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'entry','value':150900000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'exit','value':197530000},
+      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'exit','value':-197530000},
       {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'entry','value':197500000},
-      {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'exit','value':135300000},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':477768000},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':246528000},
+      {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'exit','value':-135300000},
+      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'entry','value':477768000},
+      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'exit','value':-246528000},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':247520000},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':1570400000},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00168','directionKey':'entry','value':1436064000},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00168','directionKey':'exit','value':0},
+      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':-1570400000},
+      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'entry','value':1436064000},
+      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'exit','value':0},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':2028000000},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':0},
       {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':0},
-      {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':2080000000},
+      {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':-2080000000},
       {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'entry','value':1158796000},
       {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'exit','value':0},
       {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'entry','value':0},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'exit','value':1200359000},
+      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'exit','value':-1200359000},
       {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'entry','value':0},
-      {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'exit','value':761498000},
+      {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'exit','value':-761498000},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'entry','value':1104838000},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'exit','value':0}
         ]      
@@ -438,53 +432,51 @@ def render_plot_I():
 
     physical_flow = [
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':23593933},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'exit', 'value':100503372},
+      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'exit', 'value':-100503372},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':100478674},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'exit','value':723304839},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00139','directionKey':'entry','value':708229647},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00139','directionKey':'exit','value':0},
+      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'exit','value':-723304839},
+      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'entry','value':708229647},
+      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':190633813},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':0},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':193533361},
+      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':-193533361},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':54878},
+      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':-54878},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':91672},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':0},
       {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'entry','value':848158637},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':631255},
+      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':-631255},
       {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00096','directionKey':'entry','value':530269},
-      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':848231116},
+      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':-848231116},
       {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'entry','value':1001247302},
       {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'exit','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'UGS-00446','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'UGS-00446','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':5167375432},
+      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':-5167375432},
       {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'entry','value':7078499},
       {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'exit','value':0},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'entry','value':251769},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'exit','value':14733304},
+      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'exit','value':-14733304},
       {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'entry','value':14720812},
-      {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'exit','value':574821},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':95443745},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':0},
+      {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'exit','value':-574821},
+      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'entry','value':95443745},
+      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'exit','value':0},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':0},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':0},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00168','directionKey':'entry','value':931596649},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00168','directionKey':'exit','value':0},
+      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'entry','value':931596649},
+      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'exit','value':0},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':1483219266},
       {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':0},
       {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':0},
-      {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':1487078807},
+      {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':-1487078807},
       {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'entry','value':862528780},
       {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'exit','value':0},
       {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'entry','value':0},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'exit','value':862519608},
+      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'exit','value':-862519608},
       {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'entry','value':0},
-      {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'exit','value':872133690},
+      {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'exit','value':-872133690},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'entry','value':874540742},
       {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'exit','value':0}  
       ]      
@@ -504,9 +496,8 @@ def render_plot_I():
     list_merge = [a + b for a, b in zip(list_temp, list_values)]
 
 
-    # return str(list_dates)
     return render_template('chart_2.html', data_rows = list_merge, columns = indicator)
-    # return render_template('chart_2.html', data_rows = zip(list1, list2, list3))
+    
  
 
 
