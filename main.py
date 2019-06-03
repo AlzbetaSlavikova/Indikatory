@@ -7,6 +7,7 @@ import random
 import io
 import numpy as np 
 from datetime import datetime, timedelta
+import logging
 
 app = Flask(__name__)
 
@@ -499,7 +500,10 @@ def render_plot_I():
     return render_template('chart_2.html', data_rows = list_merge, columns = indicator)
     
  
-
+if __name__ != '__main__':
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
 
 
     
