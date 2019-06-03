@@ -290,7 +290,7 @@ def render_plot():
           if i['operatorKey'] == operator and i['pointKey'] == point and i['directionKey'] == 'entry':
             physical_flow_entry.append(i['value'])
 
-    list_dates = [x.strftime("%d-%m-%Y") for x in datumy]
+    list_dates = [x.isoformat() for x in datumy]
     list_merge = [list(a) for a in zip(list_dates, hodnoty_entry, hodnoty_exit, technical_capacity_exit,  technical_capacity_entry, physical_flow_entry, physical_flow_exit)]
     
     
@@ -316,33 +316,7 @@ def render_plot_I():
     listy_indikatory = {}
     listy = []
 
-    for i in indicator:
-        url = URL_PATTERN_2.format(i)
-        listy.append(url)
-        listy_indikatory['lst_%s' % i] = []
-        output = requests.get(url).json()
-
-                
-        for x in output['operationaldatas']:
-            periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
-            periodFrom_new = periodFrom.date()
-            periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
-            periodTo_new = periodTo.date()
-            hodnoty = {
-                "value": x['value'],
-                "periodFrom": periodFrom_new,
-                "periodTo": periodTo_new,
-                "operatorLabel": x['operatorLabel'],
-                "interruptionType": x['interruptionType'],
-                "indicator": x['indicator'],
-                "directionKey": x['directionKey'],
-                "pointLabel": x['pointLabel'],
-                "pointKey": x['pointKey']
-                }
-            listy_indikatory['lst_%s' % i].append(hodnoty)
-
-    
-# vytvoříme seznam všech datumů, které jsou v zadaném období, je možné použít pro oba API call
+    # vytvoříme seznam všech datumů, které jsou v zadaném období, je možné použít pro oba API call
     
     start = iso_date_from
     end = iso_date_to
@@ -350,151 +324,205 @@ def render_plot_I():
     delta = end - start
 
     datumy = []
-    for i in range(delta.days + 1):
-        dnes = start + timedelta(days=i)
+    for a in range(delta.days + 1):
+        dnes = start + timedelta(days=a)
         datumy.append(dnes)
 
 # dohledá hodnotu pro každé datum v dané období - ENTRY
     slovnik = {}
-
     for datum in datumy:
-        slovnik[str(datum)] = []
+      slovnik[str(datum)] = []
+    
+    # print(slovnik)
 
-    for x in list(listy_indikatory):
-        for y in listy_indikatory[x]:
-            od = y['periodFrom']
-            do = y['periodTo']
-            hodnota = y['value']
-            for datum in datumy:
-                if datum >= od and datum < do:
-                    slovnik[datum.isoformat()].append(hodnota)
-                elif do.strftime("%d-%m-%Y") == date_to and do == datum:
-                    slovnik[datum.isoformat()].append(hodnota)
+    for i in indicator:
+        # print('string indikator' + str(i))
+
+        url = URL_PATTERN_2.format(i)
+     
+        response = requests.get(url)
+        # print(response)
+            
+        if response.status_code == 200: #pro případ, že API nevrátí žádnou hodnotu, resp. chybu - opakuje se níže
+    
+          output = response.json()
+          print('url API' + str(output))
+
+          listy_indikatory['lst_%s' % i] = []
+          listy.append(url)
+                
+          for x in output['operationaldatas']:
+              periodFrom = datetime.strptime(x['periodFrom'], '%Y-%m-%dT%H:%M:%S%z')
+              periodFrom_new = periodFrom.date()
+              periodTo = datetime.strptime(x['periodTo'], '%Y-%m-%dT%H:%M:%S%z')
+              periodTo_new = periodTo.date()
+              hodnoty = {
+                  "value": x['value'],
+                  "periodFrom": periodFrom_new,
+                  "periodTo": periodTo_new,
+                  "operatorLabel": x['operatorLabel'],
+                  "interruptionType": x['interruptionType'],
+                  "indicator": x['indicator'],
+                  "directionKey": x['directionKey'],
+                  "pointLabel": x['pointLabel'],
+                  "pointKey": x['pointKey']
+                  }
+              listy_indikatory['lst_%s' % i].append(hodnoty)
+
+          # print('hodnoty pro indikator z API' + str(listy_indikatory))
+
+    
+
+          print(slovnik)
+#        if response.status_code == 200: 
+          for x in list(listy_indikatory):
+              if x == 'lst_%s' % i:
+                  for y in listy_indikatory[x]:
+                      od = y['periodFrom']
+                      do = y['periodTo']
+                      hodnota = y['value']
+                      print('od' + str(od) + 'do' + str(do))
+                      for datum in datumy:
+                          if datum >= od and datum < do:
+                              slovnik[datum.isoformat()].append(hodnota)
+                          elif do.strftime("%d-%m-%Y") == date_to and do == datum:
+                              slovnik[datum.isoformat()].append(hodnota)
+                          # else:
+                          #     slovnik[datum.isoformat()].append(1)
+          
+          # print('slovnik po přiřazení hodnot if status = 200' )
+
+        else:
+          for datum in datumy:
+            slovnik[datum.isoformat()].append(0)
+
+
+          # print('slovnik po přiřazení hodnot if status není 200' )
 
 
 
     
-  #seznam technických kapacit - pevné po celý rok  
-    technical = [
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':1640413000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'exit', 'value':913680000},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':696800000},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'exit','value':400400000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'entry','value':120000000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'exit','value':1071742000},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'entry','value':906900000},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'exit','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':367000000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':0},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':367000000},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':325090000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':290136000},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':302670000},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':0},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'entry','value':931500000},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':184800000},
-      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'entry','value':1024300000},
-      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'exit','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':28052000},
-      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'entry','value':4258416},
-      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'exit','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'entry','value':150900000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'exit','value':197530000},
-      {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'entry','value':197500000},
-      {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'exit','value':135300000},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'entry','value':477768000},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'exit','value':246528000},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':247520000},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':1570400000},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'entry','value':1436064000},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'exit','value':0},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':2028000000},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':0},
-      {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':0},
-      {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':2080000000},
-      {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'entry','value':1158796000},
-      {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'exit','value':0},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'entry','value':0},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'exit','value':1200359000},
-      {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'entry','value':0},
-      {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'exit','value':761498000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'entry','value':1104838000},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'exit','value':0}
-        ]      
+      #seznam technických kapacit - pevné po celý rok  
+        technical = [
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':1640413000},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'exit', 'value':913680000},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':696800000},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'exit','value':400400000},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'entry','value':120000000},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'exit','value':1071742000},
+          {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'entry','value':906900000},
+          {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'exit','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':367000000},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':0},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':367000000},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':325090000},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':290136000},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':302670000},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':0},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'entry','value':931500000},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':184800000},
+          {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'entry','value':1024300000},
+          {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'exit','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'entry','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':28052000},
+          {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'entry','value':4258416},
+          {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'exit','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'entry','value':150900000},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'exit','value':197530000},
+          {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'entry','value':197500000},
+          {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'exit','value':135300000},
+          {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'entry','value':477768000},
+          {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'exit','value':246528000},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':247520000},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':1570400000},
+          {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'entry','value':1436064000},
+          {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'exit','value':0},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':2028000000},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':0},
+          {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':0},
+          {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':2080000000},
+          {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'entry','value':1158796000},
+          {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'exit','value':0},
+          {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'entry','value':0},
+          {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'exit','value':1200359000},
+          {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'entry','value':0},
+          {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'exit','value':761498000},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'entry','value':1104838000},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'exit','value':0}
+            ]      
 
-    technical_capacity_i = []
-    for datum in datumy:
-      for i in technical: 
-        if i['operatorKey'] == operator and i['pointKey'] == point and i['directionKey'] == direction:
-            technical_capacity_i.append(i['value'])
-   
+        technical_capacity_i = []
+        for datum in datumy:
+          for i in technical: 
+            if i['operatorKey'] == operator and i['pointKey'] == point and i['directionKey'] == direction:
+                technical_capacity_i.append(i['value'])
+      
 
-    physical_flow = [
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':23593933},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'exit', 'value':100503372},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':100478674},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'exit','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'exit','value':723304839},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'entry','value':708229647},
-      {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'exit','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':190633813},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':0},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':0},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':193533361},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':54878},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':91672},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':0},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'entry','value':848158637},
-      {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':631255},
-      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00096','directionKey':'entry','value':530269},
-      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':848231116},
-      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'entry','value':1001247302},
-      {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'exit','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'entry','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':5167375432},
-      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'entry','value':7078499},
-      {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'exit','value':0},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'entry','value':251769},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'exit','value':14733304},
-      {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'entry','value':14720812},
-      {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'exit','value':574821},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'entry','value':95443745},
-      {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'exit','value':0},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':0},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':0},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'entry','value':931596649},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'exit','value':0},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':1483219266},
-      {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':0},
-      {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':0},
-      {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':1487078807},
-      {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'entry','value':862528780},
-      {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'exit','value':0},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'entry','value':0},
-      {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'exit','value':862519608},
-      {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'entry','value':0},
-      {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'exit','value':872133690},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'entry','value':874540742},
-      {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'exit','value':0}  
-      ]      
+        physical_flow = [
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':23593933},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00051','directionKey':'exit', 'value':100503372},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'entry','value':100478674},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00051','directionKey':'exit','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'entry','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00139','directionKey':'exit','value':723304839},
+          {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'entry','value':708229647},
+          {'operatorKey':'DE-TSO-0009','pointKey':'ITP-00069','directionKey':'exit','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':190633813},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':0},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'entry','value':0},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00150','directionKey':'exit','value':193533361},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':54878},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'entry','value':91672},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00123','directionKey':'exit','value':0},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'entry','value':848158637},
+          {'operatorKey':'DE-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':631255},
+          {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00096','directionKey':'entry','value':530269},
+          {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00096','directionKey':'exit','value':848231116},
+          {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'entry','value':1001247302},
+          {'operatorKey':'PL-TSO-0001','pointKey':'ITP-00104','directionKey':'exit','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'entry','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00158','directionKey':'exit','value':5167375432},
+          {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'entry','value':7078499},
+          {'operatorKey':'PL-TSO-0002','pointKey':'ITP-00158','directionKey':'exit','value':0},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'entry','value':251769},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00015','directionKey':'exit','value':14733304},
+          {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'entry','value':14720812},
+          {'operatorKey':'DE-TSO-0003','pointKey':'ITP-00015','directionKey':'exit','value':574821},
+          {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'entry','value':95443745},
+          {'operatorKey':'AT-TSO-0001','pointKey':'ITP-00062','directionKey':'exit','value':0},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'entry','value':0},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00168','directionKey':'exit','value':0},
+          {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'entry','value':931596649},
+          {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00037','directionKey':'exit','value':0},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':1483219266},
+          {'operatorKey':'SK-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':0},
+          {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'entry','value':0},
+          {'operatorKey':'UA-TSO-0001','pointKey':'ITP-00117','directionKey':'exit','value':1487078807},
+          {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'entry','value':862528780},
+          {'operatorKey':'IT-TSO-0001','pointKey':'ITP-00040','directionKey':'exit','value':0},
+          {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'entry','value':0},
+          {'operatorKey':'AT-TSO-0003','pointKey':'ITP-00040','directionKey':'exit','value':862519608},
+          {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'entry','value':0},
+          {'operatorKey':'DE-TSO-0016','pointKey':'ITP-00010','directionKey':'exit','value':872133690},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'entry','value':874540742},
+          {'operatorKey':'CZ-TSO-0001','pointKey':'ITP-00010','directionKey':'exit','value':0}  
+          ]      
 
-    physical_flow_i = []
-    for datum in datumy:
-        for i in physical_flow: 
-          if i['operatorKey'] == operator and i['pointKey'] == point and i['directionKey'] == direction:
-            physical_flow_i.append(i['value'])
+        physical_flow_i = []
+        for datum in datumy:
+            for i in physical_flow: 
+              if i['operatorKey'] == operator and i['pointKey'] == point and i['directionKey'] == direction:
+                physical_flow_i.append(i['value'])
 
-    list_dates = slovnik.keys()
-    list_values = [ v for v in slovnik.values() ]
+        list_dates = slovnik.keys()
+        list_values = [ v for v in slovnik.values() ]
 
-    # spojí do seznamu seznamů datumy a pevné hodnoty
-    list_temp = [list(a) for a in zip(list_dates, technical_capacity_i, physical_flow_i)]
+        # spojí do seznamu seznamů datumy a pevné hodnoty
+        list_temp = [list(a) for a in zip(list_dates, technical_capacity_i, physical_flow_i)]
 
-    list_merge = [a + b for a, b in zip(list_temp, list_values)]
+        list_merge = [a + b for a, b in zip(list_temp, list_values)]
 
 
     return render_template('chart_2.html', data_rows = list_merge, columns = indicator)

@@ -17,7 +17,7 @@
         
         var data_rows = {{ data_rows|safe }}
 
-        data.addColumn('string', 'Date');
+        data.addColumn('date', 'Date');
         data.addColumn('number', 'Entry');
         data.addColumn('number', 'Exit');
         data.addColumn('number', 'Technical capacity entry');
@@ -25,10 +25,10 @@
         data.addColumn('number', 'Average physical flow 2017-2018 entry');
         data.addColumn('number', 'Average physical flow 2017-2018 exit');
 
-        // for (row of data_rows) {
-        //     console.log(row)
-        //     row[0] = new Date(row[0])
-        // }
+        for (row of data_rows) {
+            console.log(row)
+            row[0] = new Date(row[0])
+        }
 
         data.addRows(data_rows);
 
