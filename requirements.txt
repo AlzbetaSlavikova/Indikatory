@@ -1,4 +1,4 @@
-flask==1.0.2
+flask==2.2.5
 flask_wtf==0.14.2
 gunicorn==19.9.0
 requests==2.22.0
